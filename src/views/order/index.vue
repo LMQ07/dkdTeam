@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dashboard-container">
     订单管理
   </div>
 </template>

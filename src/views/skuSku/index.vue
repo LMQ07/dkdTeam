@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dashboard-container">
     商品管理
   </div>
 </template>

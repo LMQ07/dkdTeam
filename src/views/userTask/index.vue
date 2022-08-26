@@ -1,5 +1,5 @@
 <template>
-  <div>人效统计</div>
+  <div class="dashboard-container">人效统计</div>
 </template>
 
 <script>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dashboard-container">
     运维工单
   </div>
 </template>

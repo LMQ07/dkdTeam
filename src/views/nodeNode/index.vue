@@ -1,5 +1,5 @@
 <template>
-  <div>点位管理</div>
+  <div class="dashboard-container">点位管理</div>
 </template>
 
 <script>

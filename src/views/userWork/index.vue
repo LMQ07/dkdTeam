@@ -1,5 +1,5 @@
 <template>
-  <div>工作量列表</div>
+  <div class="dashboard-container">工作量列表</div>
 </template>
 
 <script>

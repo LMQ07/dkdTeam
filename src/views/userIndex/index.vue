@@ -1,5 +1,5 @@
 <template>
-  <div>人员列表</div>
+  <div class="dashboard-container">人员列表</div>
 </template>
 
 <script>

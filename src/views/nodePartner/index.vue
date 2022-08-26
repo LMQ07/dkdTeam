@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dashboard-container">
     合作商管理
   </div>
 </template>

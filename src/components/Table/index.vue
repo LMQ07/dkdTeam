@@ -42,6 +42,7 @@
 
 <script>
 export default {
+  name: 'Table',
   props: {
     thead: {
       type: Array,

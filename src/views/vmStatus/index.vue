@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dashboard-container">
     设备状态
   </div>
 </template>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="dashboard-container">
     对账统计
   </div>
 </template>
