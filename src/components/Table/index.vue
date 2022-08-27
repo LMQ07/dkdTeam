@@ -73,7 +73,7 @@ export default {
       default: 0
     },
     pageIndex: {
-      type: Number,
+      type: [String, Number],
       default: 1
     },
     totalPage: {

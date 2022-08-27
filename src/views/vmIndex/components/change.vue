@@ -61,6 +61,7 @@ export default {
   methods: {
     handleClose() {
       this.$parent.changeShow = false
+      this.form.nodeId = this.rowDetail.node.id
     },
     // 获取点位列表
     async getNodeList() {
