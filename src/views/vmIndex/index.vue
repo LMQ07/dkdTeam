@@ -26,7 +26,7 @@
           <el-button type="text">
             货道
           </el-button>
-          <el-button type="text">
+          <el-button type="text" @click="setOneRow(row)">
             策略
           </el-button>
           <el-button type="text">
@@ -68,7 +68,9 @@ export default {
         { label: '操作', prop: 'action', slotName: 'action' }
       ],
       isShowCheckAll: false,
-      isShowNewAdd: false
+      isShowNewAdd: false,
+      AllorOne: 1,
+      innerCodeList: []
     }
   },
   computed: {
@@ -150,11 +152,34 @@ export default {
     },
     // 修改策略请求
     async changeCheckWay(id) {
-      await submitPolicy({
-        innerCodeList: this.checkItemList,
-        policyId: id
-      })
-      this.isCheck = false
+      if (this.AllorOne === 1) {
+        await submitPolicy({
+          innerCodeList: this.checkItemList,
+          policyId: id
+        })
+        this.$message.success('修改策略成功')
+        this.isCheck = false
+        this.getVmIndexDate({
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        })
+      } else {
+        await submitPolicy({
+          innerCodeList: this.innerCodeList,
+          policyId: id
+        })
+        this.$message.success('修改策略成功')
+        this.isCheck = false
+        this.getVmIndexDate({
+          pageIndex: this.pageIndex,
+          pageSize: this.pageSize
+        })
+      }
+    },
+    setOneRow(row) {
+      this.isShowCheckAll = true
+      this.AllorOne = 2
+      this.innerCodeList.push(row.row.innerCode)
     }
   }
 }
