@@ -5,6 +5,7 @@
       :data="tableDate"
       style="width: 100%"
       class="mq-table"
+      empty-text="暂无数据"
       @selection-change="handleSelectionChange"
     >
       <el-table-column
@@ -38,10 +39,6 @@
           :label="item.label"
         />
       </template>
-      <el-table-column
-        v-if="tableDate.length === 0"
-      >暂无数据
-      </el-table-column>
     </el-table>
     <div v-if="tableDate.length !== 0 && isShowPage" class="page">
       <div>
