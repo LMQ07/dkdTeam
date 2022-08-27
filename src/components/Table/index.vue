@@ -6,26 +6,47 @@
       class="mq-table"
     >
       <el-table-column
+        v-if="showBox"
+        type="selection"
+        width="55"
+      />
+      <el-table-column
         v-if="isShowIndex"
         type="index"
         label="序号"
+        width="80"
       />
-      <el-table-column
+      <template
         v-for="item, index in thead"
-        :key="index"
-        :prop="item.prop"
-        :label="item.label"
-      />
-      <el-table-column v-if="isShowDone" :label="done">
+      >
+        <el-table-column
+          v-if="item.slotName"
+          :key="index"
+          :prop="item.prop"
+          :label="item.label"
+        >
+          <template v-slot="row">
+            <slot :name="item.slotName" :row="row" />
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-else
+          :key="index"
+          :prop="item.prop"
+          :label="item.label"
+        />
+      </template>
+      <!-- <el-table-column v-if="isShowDone" :label="done">
         <template v-slot="{row}">
           <div class="detail">
             <slot :row="row" />
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column
         v-if="tableDate.length === 0"
-      >暂无数据</el-table-column>
+      >暂无数据
+      </el-table-column>
     </el-table>
     <div v-if="tableDate.length !== 0 && isShowPage" class="page">
       <div>
@@ -64,10 +85,6 @@ export default {
       type: [String, Number],
       default: 1
     },
-    isShowDone: {
-      type: Boolean,
-      default: true
-    },
     isShowPage: {
       type: Boolean,
       default: true
@@ -76,9 +93,9 @@ export default {
       type: Boolean,
       default: true
     },
-    done: {
-      type: String,
-      default: '操作'
+    showBox: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -104,7 +121,7 @@ export default {
   },
   methods: {
     changePage(val) {
-      this.$emit('changePageIndex', val)
+      this.$emit('click', val)
     }
   }
 }
