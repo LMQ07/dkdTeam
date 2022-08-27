@@ -11,20 +11,7 @@
         :page-index="pageIndex"
         :total-page="totalPage"
         @click="changeIndex"
-      >
-        <template v-slot="{row}">
-          <el-button type="link">货道</el-button>
-          <!-- <span>
-            货道
-          </span>
-          <span>
-            策略
-          </span>
-          <span>
-            修改
-          </span> -->
-        </template>
-      </Table>
+      />
     </div>
   </div>
 </template>

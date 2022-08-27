@@ -1,9 +1,11 @@
 <template>
   <div>
     <el-table
+      ref="table"
       :data="tableDate"
       style="width: 100%"
       class="mq-table"
+      @selection-change="handleSelectionChange"
     >
       <el-table-column
         v-if="showBox"
@@ -96,6 +98,10 @@ export default {
     showBox: {
       type: Boolean,
       default: false
+    },
+    isChecked: {
+      type: Boolean,
+      default: true
     }
   },
   data() {
@@ -119,9 +125,20 @@ export default {
       }]
     }
   },
+  watch: {
+    isChecked(val) {
+      if (!val) {
+        this.$refs.table.clearSelection()
+      }
+    }
+  },
   methods: {
     changePage(val) {
       this.$emit('click', val)
+    },
+    handleSelectionChange(val) {
+      // 选中的数据是哪些
+      this.$emit('change', val)
     }
   }
 }
