@@ -115,7 +115,7 @@
     </div>
     <!-- 合作商点位数Top5 -->
     <div class="bottom">
-      <el-row :gutter="20">
+      <el-row :gutter="20" style="margin-left: 0px;">
         <el-col :span="14">
           <el-card class="common">
             <div class="header">
