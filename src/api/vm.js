@@ -42,3 +42,10 @@ export function addNewEquipment(data) {
     data
   })
 }
+// 修改点位
+export function changeNode(id, nodeId) {
+  return request({
+    url: `vm-service/vm/${id}/${nodeId}`,
+    method: 'PUT'
+  })
+}

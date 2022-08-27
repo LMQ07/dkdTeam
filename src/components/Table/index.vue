@@ -38,13 +38,6 @@
           :label="item.label"
         />
       </template>
-      <!-- <el-table-column v-if="isShowDone" :label="done">
-        <template v-slot="{row}">
-          <div class="detail">
-            <slot :row="row" />
-          </div>
-        </template>
-      </el-table-column> -->
       <el-table-column
         v-if="tableDate.length === 0"
       >暂无数据

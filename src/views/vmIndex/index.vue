@@ -29,7 +29,7 @@
           <el-button type="text" @click="setOneRow(row)">
             策略
           </el-button>
-          <el-button type="text">
+          <el-button type="text" @click="showDialog(row)">
             修改
           </el-button>
         </template>
@@ -37,6 +37,7 @@
     </div>
     <setAllCheck :dialog-visible="isShowCheckAll" @submit="changeCheckWay" />
     <addNew :dialog-visible="isShowNewAdd" />
+    <change :dialog-visible="changeShow" :row-detail="changeRow" />
   </div>
 </template>
 
@@ -44,10 +45,12 @@
 import { getVmIndexMsg, submitPolicy } from '@/api/vm'
 import setAllCheck from './components/setAllCheck.vue'
 import addNew from './components/addNew.vue'
+import change from './components/change.vue'
 export default {
   components: {
     setAllCheck,
-    addNew
+    addNew,
+    change
   },
   data() {
     return {
@@ -70,7 +73,9 @@ export default {
       isShowCheckAll: false,
       isShowNewAdd: false,
       AllorOne: 1,
-      innerCodeList: []
+      innerCodeList: [],
+      changeShow: false,
+      changeRow: {}
     }
   },
   computed: {
@@ -80,12 +85,15 @@ export default {
     }
   },
   mounted() {
-    this.getVmIndexDate({
-      pageIndex: this.pageIndex,
-      pageSize: this.pageSize
-    })
+    this.getDate()
   },
   methods: {
+    getDate() {
+      this.getVmIndexDate({
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
+      })
+    },
     searchByInnerCode(value) {
       this.pageIndex = 1
       this.getVmIndexDate({
@@ -134,6 +142,10 @@ export default {
       // val就是选中的数组是哪些 哪些需要批量操作
       this.checkItemList = val.map(item => item.innerCode)
       console.log(this.checkItemList)
+      this.getVmIndexDate({
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
+      })
     },
     // 是否展示
     setShowCheckAll() {
@@ -180,6 +192,11 @@ export default {
       this.isShowCheckAll = true
       this.AllorOne = 2
       this.innerCodeList.push(row.row.innerCode)
+    },
+    showDialog(row) {
+      this.changeShow = true
+      this.changeRow = row.row
+      console.log(row.row)
     }
   }
 }

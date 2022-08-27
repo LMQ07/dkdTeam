@@ -76,6 +76,6 @@ export default {
     border: none;
 }
 .el-select{
-  width: 100%;
+  width: 80%;
 }
 </style>
