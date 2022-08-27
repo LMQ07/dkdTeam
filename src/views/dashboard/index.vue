@@ -62,10 +62,24 @@
                   <span class="sub-title">{{ start }} ~ {{ end }}</span>
                 </div>
                 <div class="week-month-year">
-                  <div class="item is-checked">周</div>
-                  <div class="item">月</div>
-                  <div class="item">年</div>
+                  <div :class="['item',{isChecked:changeStyle === 'week'}]" @click="changeDates('week')">周</div>
+                  <div :class="['item',{isChecked:changeStyle === 'month'}]" @click="changeDates('month')">月</div>
+                  <div :class="['item',{isChecked:changeStyle === 'year'}]" @click="changeDates('year')">年</div>
                 </div>
+              </div>
+              <div class="body">
+                <el-row>
+                  <el-col :span="12">
+                    <div>
+                      <echarts :option="saleNumoption" />
+                    </div>
+                  </el-col>
+                  <el-col :span="12">
+                    <div>
+                      <echarts :option="saleTotaloption" />
+                    </div>
+                  </el-col>
+                </el-row>
               </div>
             </el-col>
           </el-row>
@@ -99,6 +113,43 @@
         </el-col>
       </el-row>
     </div>
+    <!-- 合作商点位数Top5 -->
+    <div class="bottom">
+      <el-row :gutter="20">
+        <el-col :span="14">
+          <el-card class="common">
+            <div class="header">
+              <div class="title">合作商点位数Top5</div>
+              <span class="dian el-icon-more" />
+            </div>
+            <div>
+              <el-col :span="17">
+                <echarts :option="partneroption" />
+              </el-col>
+              <el-col :span="7">
+                <div class="collect">
+                  <div class="count">{{ nodeCount }}</div>
+                  <div class="name">点位数</div>
+                  <div class="count count2">{{ partnerCount }}</div>
+                  <div class="name">合作商数</div>
+                </div>
+              </el-col>
+            </div>
+          </el-card>
+        </el-col>
+        <el-col :span="10">
+          <el-card class="common">
+            <div class="header">
+              <span class="title">异常设备监控</span>
+            </div>
+            <div class="main">
+              <img src="@/assets/images/404.png" alt="">
+              <span class="no">暂无数据</span>
+            </div>
+          </el-card>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 
@@ -108,10 +159,16 @@ import {
   getAmountCollect,
   getOrderCount,
   getTaskReportInfo,
-  getMoneyApi
+  getMoneyApi,
+  getSaleTotal,
+  getTogetherPartner
 }
 from '@/api/dashboard'
+import echarts from './components/echarts.vue'
 export default {
+  components: {
+    echarts
+  },
   data() {
     return {
       // start: '2022-07-01',
@@ -120,7 +177,12 @@ export default {
       collectType: 1, // 按月统计 销售
       OrderCount: 0, // 销售统计 总数量
       taskCount: [], // 工单统计
-      money: 0 // 销售总额
+      money: 0, // 销售总额
+      changeStyle: 'week',
+      saleNumoption: {}, // 获取销售数据趋势
+      saleTotaloption: {}, // 销售额分布
+      partneroption: {}, // 合作商点位
+      partnerList: [] // 合作商列表
     }
   },
   computed: {
@@ -149,14 +211,24 @@ export default {
       return this.taskCount.reduce((per, cur) => {
         return per + cur.progressTotal
       }, 0)
+    },
+    nodeCount() { // 点位数
+      return this.partnerList.reduce((per, cur) => {
+        return per + cur.value
+      }, 0)
+    },
+    partnerCount() { // 合作商总数
+      return this.partnerList.length
     }
   },
   created() {
     this.getBussinessTop()
-    // this.getAmountCollect()
+    this.getAmountCollect()
     this.getOrderCount()
     this.getTaskReportInfo()
     this.getMoney()
+    this.getSaleTotal()
+    this.getPartner()
   },
   methods: {
     // 获取榜单前十
@@ -194,14 +266,88 @@ export default {
 
       return oYear + '-' + oMoth + '-' + oDay
     },
-    // 获取销售
-    async  getAmountCollect() {
+    // 获取销售数据趋势
+    async getAmountCollect() {
       try {
         const res = await getAmountCollect(this.collectType, this.start, this.end)
-        console.log(res)
+        // console.log(res.data)
+        const dateArr = res.data.series.map(item => {
+          return parseInt((item / 100))
+        })
+        // console.log(dateArr)
+        const option = {
+          xAxis: {
+            type: 'category',
+            boundaryGap: false,
+            data: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日']
+          },
+          yAxis: {
+            type: 'value'
+          },
+          series: [
+            {
+              data: dateArr,
+              type: 'line',
+              areaStyle: {}
+            }
+          ]
+        }
+        this.saleNumoption = option
       } catch (e) {
         console.log(e)
       }
+    },
+    //  获取销售额分布
+    async getSaleTotal() {
+      const res = await getSaleTotal(this.start, this.end)
+      // console.log(res)
+      const option = {
+        xAxis: {
+          type: 'category',
+          data: res.data.xAxis
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            data: res.data.series,
+            type: 'bar'
+          }
+        ]
+      }
+      this.saleTotaloption = option
+    },
+    // 获取合作商
+    async getPartner() {
+      const res = await getTogetherPartner()
+      // console.log('partner', res.data)
+      this.partnerList = res.data
+      console.log(this.partnerList)
+      const date = res.data.map(item => { return { name: item['name'], value: item['value'] } })
+      // console.log(date)
+      const option = {
+        legend: {
+          top: 'bottom'
+        },
+        toolbox: {
+          show: true
+        },
+        series: [
+          {
+            name: 'Nightingale Chart',
+            type: 'pie',
+            radius: [50, 100],
+            center: ['50%', '50%'],
+            roseType: 'area',
+            itemStyle: {
+              borderRadius: 0
+            },
+            data: date
+          }
+        ]
+      }
+      this.partneroption = option
     },
     // 获取一定时间范围之内的订单总数
     async getOrderCount() {
@@ -239,6 +385,27 @@ export default {
         this.money = result.toFixed(2)
       } catch (e) {
         console.log(e)
+      }
+    },
+    // 改变点击年月日的样式
+    changeDates(val) {
+      this.changeStyle = val
+    },
+    // 获取当前日期的周一
+    getCurrentWeekMondadyDate() {
+      const currentTimeStamp = new Date().getTime() // 获取当天的时间戳
+      const currentWeek = new Date().getDay() === 0 ? 7 : new Date().getDay() // 因为星期天在js里返回的是 0 所以要给他弄成7
+      const daysApartCount = currentWeek - 1 // 用今天星期几 - 1  就得出了 今天星期几 离 当前星期的星期一有多少天
+      const timeStampOfOneDay = 24 * 60 * 60 * 1000 // 计算 一天的时间戳  一共有多少毫秒
+      const countTimeStamp = daysApartCount * timeStampOfOneDay // 用相隔的天数 乘 一天的时间戳（毫秒）得出相隔的天的毫秒
+      const date = new Date(currentTimeStamp - countTimeStamp) // 最后 拿当日的时间戳（毫秒）减去 相隔天数的时间戳（毫秒），放进
+      // new Date 里 他会自动识别时间戳 所对应的 日期
+
+      return {
+        // 从而得到 一系列的参数
+        year: date.getFullYear(),
+        month: date.getMonth() + 1,
+        day: date.getDate()
       }
     }
   }
@@ -350,6 +517,35 @@ export default {
       justify-content: space-between;
     }
 
+    .week-month-year {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 129px;
+      height: 34px;
+      background: rgba(233,243,255,.37);
+      border-radius: 10px;
+
+     .item{
+       display: flex;
+       align-items: center;
+       justify-content: center;
+       width: 37px;
+       height: 25px;
+       font-size: 14px;
+       color: #9ca3b4;
+       cursor: pointer;
+     }
+
+     .isChecked{
+        background: #fff;
+        -webkit-box-shadow: 0 0 4px 0 rgb(0 0 0 / 11%);
+        box-shadow: 0 0 4px 0rgba(0,0,0,.11);
+        border-radius: 7px;
+        font-weight: 600;
+        color: #333;
+     }
+    }
     .title {
     font-size: 16px;
     font-family: PingFangSC-Semibold,PingFang SC;
@@ -448,6 +644,79 @@ export default {
    color: #8e5900;
    width: 21px;
    height: 20px;
+}
+.bottom{
+  margin-top:15px;
+  .common{
+    border-radius:20px;
+    min-height: 353px;
+    background: #fff;
+    padding: 10px;
+    .header{
+    font-weight: 600;
+    color: #333;
+    font-size: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: space-between;
+
+    .dian {
+      width: 17px;
+      height: 17px;
+      color: #5f84ff;
+      cursor: pointer;
+      border: 1px solid #5f84ff;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 14px;
+    }
+    }
+    .collect {
+      width: 154px;
+      height: 230px;
+      padding-top: 47px;
+      padding-left: 38px;
+      background: linear-gradient(135deg,transparent,#f8f8f9 0) 0 0,linear-gradient(-135deg,transparent 12px,#f8f8f9 0) 100% 0,linear-gradient(-45deg,transparent,#f8f8f9 0) 100% 100%,linear-gradient(45deg,transparent 12px,#f8f8f9 0) 0 100%;
+      background-size: 50% 50%;
+      background-repeat: no-repeat;
+
+      .count{
+      height: 33px;
+      font-size: 24px;
+      font-family: PingFangSC-Semibold,PingFang SC;
+      font-weight: 600;
+      color: #072074;
+      line-height: 33px;
+      }
+
+      .count2 {
+        margin-top: 20px;
+      }
+      .name {
+       height: 17px;
+       margin-top: 6px;
+       font-size: 12px;
+       font-family: PingFangSC-Regular,PingFang SC;
+       font-weight: 400;
+       color: #000412;
+       line-height: 17px;
+      }
+
+    }
+    .main{
+      display: flex;
+      height: 260px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      .no {
+        margin-top: 25px;
+        color: #20232a;
+        font-size: 14px;
+      }
+    }
+  }
 }
 
 </style>

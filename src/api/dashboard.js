@@ -8,13 +8,6 @@ export const getBussinessTop = (start, end) => {
   })
 }
 
-// 销售统计
-export const getAmountCollect = (collectType, start, end) => {
-  return request({
-    url: `/order-service/report/amountCollect/${collectType}/${start}/${end}`
-  })
-}
-
 // 获取一定时间范围之内的订单总数
 export const getOrderCount = (params) => {
   return request({
@@ -35,6 +28,27 @@ export const getMoneyApi = (params) => {
 export const getTaskReportInfo = (start, end) => {
   return request({
     url: `/task-service/task/taskReportInfo/${start}/${end}`
+  })
+}
+
+// 获取销售数据趋势
+export const getAmountCollect = (collectType, start, end) => {
+  return request({
+    url: `/order-service/report/amountCollect/${collectType}/${start}/${end}`
+  })
+}
+
+// 获取销售额分布
+export function getSaleTotal(start, end) {
+  return request({
+    url: `order-service/report/regionCollect/${start}/${end}`
+  })
+}
+
+// 获取合作商
+export function getTogetherPartner() {
+  return request({
+    url: '/vm-service/node/nodeCollect'
   })
 }
 
