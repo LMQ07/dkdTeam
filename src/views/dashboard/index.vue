@@ -416,6 +416,7 @@ export default {
 <style lang="scss" scoped>
 
 .dashboard-container{
+
   background-color: #f8fafd;
   // padding: 20px;
   .header {
@@ -720,3 +721,8 @@ export default {
 }
 
 </style>
+ <style lang="scss">
+ .dashboard-container{
+  margin: 0px;
+ }
+ </style>
