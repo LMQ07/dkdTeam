@@ -16,6 +16,9 @@
       </el-form>
     </el-card>
     <el-card>
+      <div class="addBtn">
+        <el-button icon="el-icon-circle-plus-outline" type="warning" size="small" @click="addPerson">新建</el-button>
+      </div>
       <myTable
         :table-date="tableDate"
         :thead="thead"
@@ -25,18 +28,18 @@
         @click="click"
       >
         <template v-slot:action="{row}">
-          <el-button type="text">修改</el-button>
-          <el-button type="text">删除</el-button>
+          <el-button type="text" @click="edit(row.row)">修改</el-button>
+          <el-button type="text" @click="del(row.row)">删除</el-button>
         </template>
       </myTable>
     </el-card>
-    <personModel />
+    <personModel ref="personModel" :person-visible.sync="personVisible" @refresh="userServiceList" />
   </div>
 </template>
 
 <script>
 import myTable from '@/components/Table'
-import { userServiceList } from '@/api/userIndex'
+import { userServiceList, userServiceUserDel } from '@/api/userIndex'
 import personModel from './components/personModel.vue'
 export default {
   name: 'UserIndex',
@@ -73,7 +76,8 @@ export default {
           prop: 'action',
           slotName: 'action'
         }
-      ]
+      ],
+      personVisible: false
     }
   },
   created() {
@@ -86,6 +90,10 @@ export default {
         item.roleName = item.role.roleName
         return item
       })
+      if (this.tableDate.length === 0 && data.totalCount !== 0) {
+        this.formData.pageIndex = +this.formData.pageIndex - 1
+        this.userServiceList()
+      }
       console.log('this.tableDate', this.tableDate)
       this.totalCount = data.totalCount
       this.totalPage = data.totalPage
@@ -101,11 +109,28 @@ export default {
     search() {
       this.$set(this.formData, 'pageIndex', 1)
       this.userServiceList()
+    },
+    addPerson() {
+      this.personVisible = true
+    },
+    edit(row) {
+      this.$refs.personModel.personForm = { ...row }
+      this.personVisible = true
+    },
+    async del(row) {
+      try {
+        await userServiceUserDel(row.id)
+        this.userServiceList()
+      } catch (error) {
+        this.$message.error(error)
+      }
     }
   }
 }
 </script>
 
-<style>
-
+<style lang="scss" scoped>
+.addBtn{
+  margin-bottom: 20px;
+}
 </style>

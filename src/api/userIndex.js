@@ -15,10 +15,11 @@ export function vmServiceGet(params) {
   })
 }
 // 修改人员
-export function userServicePut(id) {
+export function userServicePut(id, data) {
   return request({
-    url: `/api/user-service/user/${id}`,
-    method: 'PUT'
+    url: `/user-service/user/${id}`,
+    method: 'PUT',
+    data
   })
 }
 // 角色列表
@@ -33,5 +34,20 @@ export function fileUpload(fileName) {
     url: '/vm-service/sku/fileUpload',
     method: 'POST',
     data: fileName
+  })
+}
+// 新增人员
+export function userServiceUserPOST(data) {
+  return request({
+    url: 'user-service/user',
+    method: 'POST',
+    data
+  })
+}
+// 删除人员
+export function userServiceUserDel(id) {
+  return request({
+    url: `user-service/user/${id}`,
+    method: 'DELETE'
   })
 }

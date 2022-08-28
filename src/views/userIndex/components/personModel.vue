@@ -1,9 +1,10 @@
 <template>
   <el-dialog
-    title="人员"
+    :title="personForm.id?'编辑人员':'新增人员'"
     :visible.sync="personVisible"
+    :before-close="handleClose"
   >
-    <el-form :model="personForm" label-width="100px" :rules="personRules">
+    <el-form ref="personForm" :model="personForm" label-width="100px" :rules="personRules">
       <el-form-item label="人员名称" prop="userName" label-width="100px">
         <el-input v-model="personForm.userName" maxlength="5" show-word-limit placeholder="请输入" />
       </el-form-item>
@@ -41,8 +42,8 @@
       </el-form-item>
 
       <el-form-item size="large">
-        <el-button type="primary">立即创建</el-button>
         <el-button>取消</el-button>
+        <el-button type="primary" @click="submitPerson">确定</el-button>
       </el-form-item>
 
     </el-form>
@@ -51,13 +52,13 @@
 </template>
 
 <script>
-import { userServiceRole, vmServiceGet, fileUpload } from '@/api/userIndex'
+import { userServiceRole, vmServiceGet, fileUpload, userServiceUserPOST, userServicePut } from '@/api/userIndex'
 export default {
   props: {
     personVisible: {
       type: Boolean,
       default: () => {
-        return true
+        return false
       }
     }
   },
@@ -83,7 +84,8 @@ export default {
         ],
         mobile: [
           { required: true, message: '请填联系电话', trigger: 'blur' },
-          { max: 11, message: '长度在不超过11个字符', trigger: 'blur' }
+          { max: 11, message: '长度在不超过11个字符', trigger: 'blur' },
+          { pattern: /^(?:(?:\+|00)86)?1[3-9]\d{9}$/, message: '请输入正确的格式', trigger: 'blur' }
         ],
         regionId: [
           { required: true, message: '请填选择区域', trigger: 'change' }
@@ -111,7 +113,6 @@ export default {
     async userServiceRole() {
       const { data } = await userServiceRole()
       this.roleList = data
-    //   console.log('this.roleList', this.roleList)
     },
     async vmServiceGet() {
       const { data } = await vmServiceGet()
@@ -124,12 +125,10 @@ export default {
         return this.personForm.regionId === item.id
       })
       this.personForm.regionName = regionItem[0].name
-      console.log('regionItem', regionItem)
     },
     handleAvatarSuccess(res, file) {
     },
     beforeAvatarUpload(file) {
-      console.log(999999)
       const types = ['image/jpeg', 'image/jpg']
       const isImage = types.includes(file.type)
       console.log('isImage', isImage)
@@ -150,8 +149,32 @@ export default {
       const formData = new FormData()
       formData.append('fileName', _file)
       const { data } = await fileUpload(formData)
-      console.log('data1111', data)
       this.personForm.image = data
+    },
+    async submitPerson() {
+      try {
+        await this.$refs.personForm.validate()
+        // const res = await userServiceUserPOST(this.personForm)
+        this.personForm.id ? await userServicePut(this.personForm.id, this.personForm) : await userServiceUserPOST(this.personForm)
+        this.handleClose()
+        this.$emit('refresh')
+      } catch (error) {
+        console.log(error)
+      }
+    },
+    handleClose() {
+      this.$emit('update:personVisible', false)
+      console.log(8888888)
+      this.$refs.personForm.resetFields()
+      this.personForm = {
+        userName: '',
+        roleId: '',
+        mobile: '',
+        regionId: '',
+        regionName: '',
+        image: '',
+        status: false
+      }
     }
   }
 }
