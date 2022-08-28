@@ -1,6 +1,5 @@
 <template>
   <div>
-<<<<<<< HEAD
     <el-table
       ref="table"
       :data="tableDate"
@@ -14,17 +13,15 @@
         type="selection"
         width="55"
       />
-=======
-    <el-table :data="tableDate" style="width: 100%" class="mq-table">
-      <el-table-column v-if="showBox" type="selection" width="55" />
->>>>>>> feature/task/ht
       <el-table-column
         v-if="isShowIndex"
         type="index"
         label="序号"
         width="80"
       />
-      <template v-for="(item, index) in thead">
+      <template
+        v-for="item, index in thead"
+      >
         <el-table-column
           v-if="item.slotName"
           :key="index"
@@ -42,29 +39,15 @@
           :label="item.label"
         />
       </template>
-<<<<<<< HEAD
-=======
-      <el-table-column v-if="tableDate.length === 0">暂无数据 </el-table-column>
->>>>>>> feature/task/ht
     </el-table>
     <div v-if="tableDate.length !== 0 && isShowPage" class="page">
       <div>
         <span>共{{ totalCount }}条记录</span>
-        <span> 第{{ pageIndex }}/{{ totalPage }}页</span>
+        <span>  第{{ pageIndex }}/{{ totalPage }}页</span>
       </div>
       <div>
-        <el-button
-          :disabled="pageIndex == 1"
-          size="small"
-          @click="changePage(0)"
-          >上一页</el-button
-        >
-        <el-button
-          :disabled="pageIndex == totalPage"
-          size="small"
-          @click="changePage(1)"
-          >下一页</el-button
-        >
+        <el-button :disabled="pageIndex===1" size="small" @click="changePage(0)">上一页</el-button>
+        <el-button :disabled="pageIndex==totalPage" size="small" @click="changePage(1)">下一页</el-button>
       </div>
     </div>
   </div>
@@ -72,57 +55,65 @@
 
 <script>
 export default {
-  name: "Table",
+  name: 'Table',
   props: {
     thead: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     tableDate: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     totalCount: {
       type: [String, Number],
-      default: 0,
+      default: 0
     },
     pageIndex: {
-<<<<<<< HEAD
       type: [String, Number],
       default: 1
-=======
-      type: [Number, String],
-      default: 1,
->>>>>>> feature/task/ht
     },
     totalPage: {
       type: [String, Number],
-      default: 1,
+      default: 1
     },
     isShowPage: {
       type: Boolean,
-      default: true,
+      default: true
     },
     isShowIndex: {
       type: Boolean,
-      default: true,
+      default: true
     },
     showBox: {
       type: Boolean,
-<<<<<<< HEAD
       default: false
     },
     isChecked: {
       type: Boolean,
       default: true
     }
-=======
-      default: false,
-    },
->>>>>>> feature/task/ht
   },
   data() {
-    return {};
+    return {
+      tableData: [{
+        date: '2016-05-02',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1518 弄'
+      }, {
+        date: '2016-05-04',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1517 弄'
+      }, {
+        date: '2016-05-01',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1519 弄'
+      }, {
+        date: '2016-05-03',
+        name: '王小虎',
+        address: '上海市普陀区金沙江路 1516 弄'
+      }]
+    }
   },
   watch: {
     isChecked(val) {
@@ -133,7 +124,6 @@ export default {
   },
   methods: {
     changePage(val) {
-<<<<<<< HEAD
       this.$emit('click', val)
     },
     handleSelectionChange(val) {
@@ -142,25 +132,19 @@ export default {
     }
   }
 }
-=======
-      this.$emit("click", val);
-    },
-  },
-};
->>>>>>> feature/task/ht
 </script>
 
 <style scoped lang="scss">
-.page {
+.page{
   display: flex;
   padding: 20px;
   justify-content: space-between;
   align-items: center;
-  span {
-    font-size: 16px !important;
-    color: #dbdfe5 !important;
+  span{
+    font-size: 16px!important;
+    color: #dbdfe5!important;
   }
-  .el-button {
+  .el-button{
     background-color: #d5ddf8;
   }
 }
