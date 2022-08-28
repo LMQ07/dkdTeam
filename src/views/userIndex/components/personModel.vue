@@ -42,7 +42,7 @@
       </el-form-item>
 
       <el-form-item size="large">
-        <el-button>取消</el-button>
+        <el-button @click="handleClose">取消</el-button>
         <el-button type="primary" @click="submitPerson">确定</el-button>
       </el-form-item>
 
