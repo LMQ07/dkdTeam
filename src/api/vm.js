@@ -49,3 +49,50 @@ export function changeNode(id, nodeId) {
     method: 'PUT'
   })
 }
+// 获取当前点位是否有策略
+export function getStragory(innerCode) {
+  return request({
+    url: `vm-service/policy/vmPolicy/${innerCode}`
+  })
+}
+// 取消当前的策略
+export function cancelStragory(innerCode, policyId) {
+  return request({
+    url: `vm-service/vm/cancelPolicy/${innerCode}/${policyId}`,
+    method: 'PUT'
+  })
+}
+
+// 一下是一个弹框需要的请求
+// 获取销售量
+export function getSaleMQ(params) {
+  return request({
+    url: 'order-service/report/orderCount',
+    params
+  })
+}
+// 获取一定时间的收入
+export function getSalaryMQ(params) {
+  return request({
+    url: 'order-service/report/orderAmount',
+    params
+  })
+}
+// 售货机补货次数
+export function getCaptureMQ(innerCode, start, end) {
+  return request({
+    url: `task-service/task/supplyCount/${innerCode}/${start}/${end}`
+  })
+}
+// 售货机维修次数
+export function getRepairNumMQ(innerCode, start, end) {
+  return request({
+    url: `task-service/task/repairCount/${innerCode}/${start}/${end}`
+  })
+}
+// 售货机商品销售
+export function getGoodsNumMQ(innerCode, start, end) {
+  return request({
+    url: `order-service/report/skuCollect/${innerCode}/${start}/${end}`
+  })
+}

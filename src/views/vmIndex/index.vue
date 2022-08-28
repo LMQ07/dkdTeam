@@ -38,19 +38,22 @@
     <setAllCheck :dialog-visible="isShowCheckAll" @submit="changeCheckWay" />
     <addNew :dialog-visible="isShowNewAdd" />
     <change :dialog-visible="changeShow" :row-detail="changeRow" />
+    <showStragory :dialog-visible="showAction" :current-stragory="currentStragory" />
   </div>
 </template>
 
 <script>
-import { getVmIndexMsg, submitPolicy } from '@/api/vm'
+import { getVmIndexMsg, submitPolicy, getStragory } from '@/api/vm'
 import setAllCheck from './components/setAllCheck.vue'
 import addNew from './components/addNew.vue'
 import change from './components/change.vue'
+import showStragory from './components/showStragory.vue'
 export default {
   components: {
     setAllCheck,
     addNew,
-    change
+    change,
+    showStragory
   },
   data() {
     return {
@@ -75,7 +78,9 @@ export default {
       AllorOne: 1,
       innerCodeList: [],
       changeShow: false,
-      changeRow: {}
+      changeRow: {},
+      showAction: false,
+      currentStragory: {}
     }
   },
   computed: {
@@ -188,10 +193,17 @@ export default {
         })
       }
     },
-    setOneRow(row) {
-      this.isShowCheckAll = true
-      this.AllorOne = 2
-      this.innerCodeList.push(row.row.innerCode)
+    async setOneRow(row) {
+      const { data } = await getStragory(row.row.innerCode)
+      console.log(data)
+      if (data && data.policyName) {
+        this.showAction = true
+        this.currentStragory = data
+      } else {
+        this.isShowCheckAll = true
+        this.AllorOne = 2
+        this.innerCodeList.push(row.row.innerCode)
+      }
     },
     showDialog(row) {
       this.changeShow = true

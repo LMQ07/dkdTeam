@@ -60,6 +60,13 @@ export default {
 </script>
 
 <style lang="scss">
+  .el-dialog{
+    border-radius: 10px;
+    .el-dialog__body{
+    padding: 20px 20px 30px;
+    color: #666;
+    }
+  }
 .cancel{
       width: 80px!important;
     height: 36px;

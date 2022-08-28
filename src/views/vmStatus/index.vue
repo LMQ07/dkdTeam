@@ -32,7 +32,7 @@
         </template>
       </Table>
     </div>
-    <detailDialog :dialog-visible="detailShow" />
+    <detailDialog :dialog-visible="detailShow" :row-detail="rowDetail" />
   </div>
 </template>
 
