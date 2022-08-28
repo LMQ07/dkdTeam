@@ -22,3 +22,19 @@ export function getUserInfo(id) {
     method: 'get'
   })
 }
+
+// 人员工作量列表
+export function getUserWork(params) {
+  return request({
+    url: '/user-service/user/searchUserWork',
+    params
+  })
+}
+
+// 获取用户工作量(工单统计)
+export function getUserWorkInfo(params) {
+  return request({
+    url: 'task-service/task/userWork',
+    params
+  })
+}
