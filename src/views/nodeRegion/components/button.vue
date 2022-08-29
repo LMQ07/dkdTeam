@@ -1,6 +1,6 @@
 <template>
   <el-row>
-    <el-button size="medium" class="newBuild"> <i class="el-icon-circle-plus-outline" /> 新建</el-button>
+    <el-button size="medium" class="newBuild" @click="ShowAddDialog"> <i class="el-icon-circle-plus-outline" /> 新建</el-button>
     <el-button v-if="twoShow" size="medium" class="two">批量操作</el-button>
   </el-row>
 </template>
@@ -15,7 +15,9 @@ export default {
     }
   },
   methods: {
-
+    ShowAddDialog() {
+      this.$emit('ShowAddDialog', true)
+    }
   }
 }
 </script>
