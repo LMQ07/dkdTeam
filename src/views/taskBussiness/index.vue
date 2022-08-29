@@ -32,7 +32,7 @@
           class="addBtn"
           icon="el-icon-circle-plus-outline"
           size="mini"
-          @click="dialogFormVisible = true"
+          @click="openAddDialog"
         >
           新建
         </el-button>
@@ -62,7 +62,6 @@
         </MyTable>
       </el-row>
     </el-row>
-    <Dialog :dialogFormVisible.sync="dialogFormVisible" />
     <InfoDialog
       :infoDialogVisible="infoDialogVisible"
       :detailsInfo="rowDetailsInfo"
@@ -72,19 +71,42 @@
       :autoSupplyVisible="autoSupplyVisible"
       v-if="autoSupplyVisible"
     />
+    <NewDialog
+      :dialogFormVisible="dialogFormVisible"
+      :taskTypeOption="taskType"
+      :operatorList="operatorList"
+      @getTaskInfo="taskRequest"
+      @getInnerCode="operatorRequest"
+      @showChannelDialog="showChannelDialog"
+      v-if="dialogFormVisible"
+    />
+    <ChannelListDialog
+      :channelVisible="channelVisible"
+      :channelList="channelList"
+      v-if="channelVisible"
+      :channelLabel="channelLabel"
+      @sendDetails="getDetails"
+    />
   </div>
 </template>
 
 <script>
-import Dialog from "./components/Dialog.vue";
 import MyTable from "@/components/Table";
 import InfoDialog from "./components/InfoDialog.vue";
 import AutoSupply from "./components/AutoSupply.vue";
-import { getTaskAPI } from "@/api/task";
+import NewDialog from "./components/NewDialog";
+import ChannelListDialog from "./components/ChannelListDialog";
+import {
+  getTaskAPI,
+  getOperatorListAPI,
+  getChannelListAPI,
+  createTaskAPI,
+} from "@/api/task";
 export default {
   name: "TaskBussiness",
   data() {
     return {
+      //搜索条件
       form: {
         taskCode: "",
         status: "",
@@ -92,14 +114,20 @@ export default {
       // 新增弹框
       dialogFormVisible: false,
       tableData: [],
+      // 当前页
       currentPage: 1,
+      // 每页数量
       pageSize: "",
+      // 总共几条
       total: "",
+      // 当前行的的信息
       rowDetailsInfo: null,
       // 详情弹框
       infoDialogVisible: false,
       //工单弹框
       autoSupplyVisible: false,
+      // 补货详情弹框
+      channelVisible: false,
       dataLabel: [
         {
           prop: "taskCode",
@@ -136,6 +164,18 @@ export default {
           slotName: "operate",
         },
       ],
+      // 新增设备工单类型
+      taskType: [],
+      // 运营人员列表
+      operatorList: [],
+      //新增更新表单信息
+      taskInfo: [],
+      // 补货详情
+      details: [],
+      // 补货信息列表
+      channelList: [],
+      // 补货信息列表表头
+      channelLabel: [],
     };
   },
   created() {
@@ -176,6 +216,67 @@ export default {
       console.log(this.currentPage);
       console.log(val);
     },
+    // 打开新增弹窗
+    openAddDialog() {
+      this.taskType = [{ label: "补货工单", value: 2 }];
+      this.dialogFormVisible = true;
+    },
+    // 拿到工单编号
+    async operatorRequest(innercode) {
+      this.taskInfo.innerCode = innercode;
+      if (innercode) {
+        const { data: res } = await getOperatorListAPI(innercode);
+        console.log(res);
+        this.operatorList = res;
+      }
+      console.log(innercode);
+    },
+    // 新增工单或重建工单
+    async taskRequest(taskInfo) {
+      this.taskInfo = taskInfo;
+      this.taskInfo.details = this.details;
+      const res = await createTaskAPI(this.taskInfo);
+      this.getTaskList();
+      console.log(res);
+      this.$children[2].handleClose();
+    },
+    // 显示补货详情弹框
+    showChannelDialog() {
+      if (this.taskInfo.innerCode) {
+        this.channelLabel = [
+          { label: "货道编号", prop: "channelCode" },
+          { label: "商品名称", prop: "sku.skuName", slotName: "skuName" },
+          {
+            label: "当前数量",
+            prop: "currentCapacity",
+            slotName: "currentCapacity",
+          },
+          { label: "还可添加", prop: "num", slotName: "num" },
+          { label: "补满商品", prop: "buhuo", slotName: "buhuo" },
+        ];
+        this.channelVisible = true;
+        this.getChannelList();
+      }
+    },
+    // 获取货道详情列表
+    async getChannelList() {
+      const { data: res } = await getChannelListAPI(this.taskInfo.innerCode);
+      this.channelList = res;
+      this.channelList.forEach((item, index) => {
+        let num = item.maxCapacity - item.currentCapacity;
+        this.$set(this.channelList[index], "expectCapacity", num);
+        this.$set(this.channelList[index], "num", num);
+      });
+
+      console.log(res);
+
+      this.channelVisible = true;
+    },
+    // 将补货信息放到请求信息中去
+    getDetails(val) {
+      console.log(val);
+      this.details = val;
+    },
   },
   computed: {
     totalPage() {
@@ -184,9 +285,10 @@ export default {
   },
   components: {
     MyTable,
-    Dialog,
     InfoDialog,
     AutoSupply,
+    NewDialog,
+    ChannelListDialog,
   },
 };
 </script>

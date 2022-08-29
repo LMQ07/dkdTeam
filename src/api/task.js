@@ -45,3 +45,21 @@ export const setSupplyAlertValue =(data) =>{
     data
   })
 }
+export const cancelTask =(data) =>{
+  return request({
+    url:`/task-service/task/cancel/${data.taskId}`,
+    method:'POST',
+    data
+  })
+}
+
+export const getOperationTaskType =() =>{
+  return request({
+    url:'/task-service/taskType/list'
+  })
+}
+export const getRepairerListAPI = (innerCode) => {
+  return request({
+    url:`/user-service/user/repairerList/${innerCode}`,
+  })
+}

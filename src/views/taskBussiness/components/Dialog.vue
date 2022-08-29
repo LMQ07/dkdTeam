@@ -12,6 +12,7 @@
           :rules="{ required: true, message: '请输入', trigger: 'blur' }"
         >
           <el-input
+            ref="inputRef"
             v-model="taskInfo.innerCode"
             type="text"
             placeholder="请输入"
@@ -118,6 +119,18 @@ export default {
       type: Boolean,
       default: false,
     },
+    detailsInfo: {
+      type: Object,
+      default: () => ({
+        createType: 1,
+        innerCode: "",
+        productType: "",
+        desc: "",
+        userId: 1,
+        assignorId: "",
+        details: [],
+      }),
+    },
   },
   data() {
     return {
@@ -149,7 +162,17 @@ export default {
       ],
     };
   },
-  watch: {},
+  created() {
+    this.taskInfo = JSON.parse(JSON.stringify(this.detailsInfo));
+    this.taskInfo.productType = +this.detailsInfo?.taskType?.typeId;
+    this.getOperatorList();
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.$refs.inputRef.focus();
+      this.$refs.inputRef.blur();
+    });
+  },
   methods: {
     handleClose() {
       this.$parent.dialogFormVisible = false;
