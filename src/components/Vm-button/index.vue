@@ -1,7 +1,7 @@
 <template>
   <el-row>
-    <el-button size="medium" class="newBuild"> <i class="el-icon-circle-plus-outline" /> 新建</el-button>
-    <el-button v-if="twoShow" size="medium" class="two">批量操作</el-button>
+    <el-button size="medium" class="newBuild" @click="setNewAdd"> <i class="el-icon-circle-plus-outline" /> 新建</el-button>
+    <el-button v-if="twoShow" size="medium" class="two" @click="setShow">批量操作</el-button>
   </el-row>
 </template>
 
@@ -12,6 +12,14 @@ export default {
     twoShow: {
       type: Boolean,
       default: true
+    }
+  },
+  methods: {
+    setShow() {
+      this.$emit('click')
+    },
+    setNewAdd() {
+      this.$emit('show')
     }
   }
 }

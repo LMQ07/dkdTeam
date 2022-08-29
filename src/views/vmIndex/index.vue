@@ -16,20 +16,15 @@
         :total-page="totalPage"
         @click="changeIndex"
       >
-
         <template v-slot:img="{row}">
-          <el-avatar src="https://pics3.baidu.com/feed/cf1b9d16fdfaaf51055aeb850e4a2de7f01f7a73.jpeg?token=13a989ae26c8c26689240bf4a3c776a0" />
+          <el-avatar
+            src="https://pics3.baidu.com/feed/cf1b9d16fdfaaf51055aeb850e4a2de7f01f7a73.jpeg?token=13a989ae26c8c26689240bf4a3c776a0"
+          />
         </template>
         <template v-slot:action="{row}">
-          <el-button type="text">
-            货道
-          </el-button>
-          <el-button type="text">
-            策略
-          </el-button>
-          <el-button style="color: red" type="text">
-            修改
-          </el-button>
+          <el-button type="text">货道</el-button>
+          <el-button type="text">策略</el-button>
+          <el-button style="color: red" type="text">修改</el-button>
         </template>
       </Table>
     </div>
@@ -52,8 +47,8 @@ export default {
         { label: '详细地址', prop: 'node.addr' },
         { label: '图片', prop: 'img', slotName: 'img' },
         { label: '合作商', prop: 'ownerName' },
-        { label: '操作', prop: 'action', slotName: 'action' }
-      ]
+        { label: '操作', prop: 'action', slotName: 'action' },
+      ],
     }
   },
   mounted() {
@@ -63,13 +58,13 @@ export default {
     searchByInnerCode(value) {
       console.log(value)
     },
-    async  getVmIndexDate() {
+    async getVmIndexDate() {
       const { data } = await getVmIndexMsg({
         pageIndex: this.pageIndex,
         pageSize: this.pageSize
       })
       // 处理好数据
-      data.currentPageRecords.forEach(element => {
+      data.currentPageRecords.forEach((element) => {
         element.node.addr = element.node.addr.split('-')[3]
       })
       this.tableDate = data.currentPageRecords
@@ -86,13 +81,13 @@ export default {
         this.pageIndex += 1
         this.getVmIndexDate()
       }
-    }
-  }
+    },
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-.search{
+.search {
   display: flex;
   align-items: center;
   height: 64px;
@@ -100,13 +95,13 @@ export default {
   padding-left: 17px;
   background-color: #fff;
 }
-.result{
+.result {
   padding: 20px 15px 19px 17px;
   background-color: #fff;
 }
-.detail{
-  span{
-   color: #5f84ff;
+.detail {
+  span {
+    color: #5f84ff;
   }
 }
 </style>
