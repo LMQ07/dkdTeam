@@ -37,13 +37,14 @@
       </template>
     </Table>
     <!-- 弹窗 -->
-    <userDialog :dialog-visible.sync="dialogVisible" />
+    <userDialog :dialog-visible.sync="dialogVisible" :user-info="userInfo" :list="list" />
   </div>
 </template>
 
 <script>
-import { getUserWork, getUserWorkInfo } from '@/api/user'
+import { getUserWork, getUserWorkInfo, getUserInfo } from '@/api/user'
 import userDialog from './components/userDialog.vue'
+import { getTime, currmonthStarttime } from '@/utils/time'
 export default {
   components: {
     userDialog
@@ -90,7 +91,20 @@ export default {
         userName: '',
         isRepair: ''
       },
-      dialogVisible: false // 弹窗
+      dialogVisible: false, // 弹窗
+      userInfo: {}, // 人员详情
+      dayList: {},
+      monthList: {},
+      yearList: {},
+      list: []
+    }
+  },
+  computed: {
+    yearStart() {
+      // 获取今年第一天
+      var date1 = new Date()
+      var year1 = date1.getFullYear()
+      return year1 + '-' + '01' + '-' + '01'
     }
   },
   created() {
@@ -130,13 +144,41 @@ export default {
     // 查看操作
     async  check(id) {
       this.dialogVisible = true
-      // console.log(id)
-      try {
-        const res = await getUserWorkInfo()
-        console.log(res)
-      } catch (e) {
-        console.log(e)
-      }
+
+      // 本日
+      const day = await getUserWorkInfo({
+        userId: id,
+        start: `${getTime(new Date())} 00:00:00`,
+        end: `${getTime(new Date())} 23:59:59`
+      })
+      this.dayList = day.data
+      // console.log('day', this.dayList)
+      // 本月
+      const month = await getUserWorkInfo({
+        userId: id,
+        start: `${currmonthStarttime(new Date())} 00:00:00`,
+        end: `${getTime(new Date())} 23:59:59`
+      })
+      this.monthList = month.data
+      // console.log('month', this.monthList)
+      // 本年
+      const year = await getUserWorkInfo({
+        userId: id,
+        start: `${this.yearStart} 00:00:00`,
+        end: `${getTime(new Date())} 23:59:59`
+      })
+      this.yearList = year.data
+      // console.log('year', this.yearList)
+      this.list = []
+      this.list.push(
+        { ...this.dayList, time: '本周' },
+        { ...this.monthList, time: '本月' },
+        { ...this.yearList, time: '本年' })
+      console.log(this.list)
+      // 人员详情
+      const userInfo = await getUserInfo(id)
+      this.userInfo = userInfo.data
+      console.log(this.userInfo)
     }
 
   }
