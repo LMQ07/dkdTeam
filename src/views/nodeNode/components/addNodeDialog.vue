@@ -98,7 +98,7 @@ export default {
         ownerName:	'',	// 合作商名称
         ownerId: '',		// 合作商Id
         addr:	'',	// 详细地址
-        createUserId:	1, // 创建人Id
+        createUserId:	this.$store.state.user.userInfo.userId, // 创建人Id
         areaCode: '' // 最后一级区域Id
       },
       addrInfo: '',
@@ -128,7 +128,7 @@ export default {
         ownerName:	'',	// 合作商名称
         ownerId: '',		// 合作商Id
         addr:	'',	// 详细地址
-        createUserId:	1, // 创建人Id
+        createUserId:	'', // 创建人Id
         areaCode: '' // 最后一级区域Id
       }
       this.value = []
