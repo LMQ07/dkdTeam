@@ -32,7 +32,7 @@
         </template>
       </Table>
     </div>
-    <detailDialog :dialog-visible="detailShow" :row-detail="rowDetail" />
+    <detailDialog ref="dialog" :dialog-visible="detailShow" :row-detail="rowDetail" />
   </div>
 </template>
 
@@ -117,7 +117,9 @@ export default {
     },
     showDetail(row) {
       this.detailShow = true
-      this.rowDetail = row
+      this.rowDetail = row.row
+      console.log(row)
+      this.$refs.dialog.getDate()
     }
   }
 }
