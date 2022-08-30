@@ -22,3 +22,25 @@ export function getUserInfo(id) {
     method: 'get'
   })
 }
+
+// 获取当时工单汇总信息(人员统计头部信息)
+export function getTaskReportInfo(start, end) {
+  return request({
+    url: `task-service/task/taskReportInfo/${start}/${end}`
+  })
+}
+
+// 工单状态统计
+export function getCollectReport(start, end) {
+  return request({
+    url: `task-service/task/collectReport/${start}/${end}`
+  })
+}
+
+// 获取区域列表
+export function getRegionList(params) {
+  return request({
+    url: 'vm-service/region/search',
+    params
+  })
+}
