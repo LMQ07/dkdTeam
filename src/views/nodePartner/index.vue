@@ -6,7 +6,7 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="合作商搜索">
-              <el-input v-model="page.name" />
+              <el-input v-model="page.name" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -30,11 +30,11 @@
         :total-page="totalPage"
         @click="click"
       >
-        <template v-slot:action="{row}">
+        <template v-slot:action="{row}" width="300px">
           <el-button type="text" @click="resetPassword(row.row)">重置密码</el-button>
           <el-button type="text" @click="checkDetail(row.row)">查看详情</el-button>
           <el-button type="text" @click="edit(row.row)">修改</el-button>
-          <el-button type="text" @click="delePartner(row.row)">删除</el-button>
+          <el-button type="text" :style="{color:'#eb4444'}" @click="delePartner(row.row)">删除</el-button>
         </template>
       </Table>
 
@@ -105,6 +105,11 @@ export default {
   methods: {
     async partnerSearchGet() {
       const { data } = await partnerSearchGet(this.page)
+      console.log('data.currentPageRecords', data.currentPageRecords)
+      if (data.currentPageRecords.length === 0 && data.totalCount !== 0) {
+        this.page.pageIndex = +this.page.pageIndex - 1
+        this.partnerSearchGet()
+      }
       this.tableData = data.currentPageRecords
       this.totalCount = data.totalCount
       this.totalPage = data.totalPage
@@ -118,13 +123,13 @@ export default {
       this.partnerSearchGet()
     },
     search() {
+      this.$set(this.page, 'pageIndex', 1)
       this.partnerSearchGet()
     },
     addParnter() {
       this.partnerVisible = true
     },
     edit(row) {
-      console.log('row88888', row)
       this.partnerVisible = true
       this.$refs.partner.ruleForm = row
     },

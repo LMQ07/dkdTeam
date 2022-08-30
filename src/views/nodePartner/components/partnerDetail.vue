@@ -2,17 +2,18 @@
   <el-dialog
     title="合作商详情"
     :visible.sync="detailVisible"
-    width="30%"
+    width="630px"
     :before-close="handelClose"
   >
-    <el-row class="row">
+    <el-row class="row" type="flex" justify="center" align="center">
       <el-col :span="12">合作商名称：{{ detailData.name }}</el-col>
       <el-col :span="12">联系人：{{ detailData.contact }}</el-col>
     </el-row>
-    <el-row class="row">
+    <el-row class="row" type="flex" justify="center" align="center">
       <el-col :span="12">联系电话：{{ detailData.mobile }}</el-col>
       <el-col :span="12">分成比例：{{ detailData.ratio }}%</el-col>
     </el-row>
+
   </el-dialog>
 </template>
 
@@ -41,5 +42,11 @@ export default {
 <style lang="scss" scoped>
 .row{
     margin-bottom: 20px;
+    .el-col-12{
+      text-align: center;;
+    }
+}
+::v-deep  .el-dialog{
+  border-radius: 10px;
 }
 </style>

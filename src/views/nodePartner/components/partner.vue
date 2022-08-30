@@ -3,8 +3,9 @@
     :title="ruleForm.id?'修改合作商':'新增合作商'"
     :visible.sync="partnerVisible"
     :before-close="handleClose"
+    width="630px"
   >
-    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="120px">
+    <el-form ref="ruleForm" :model="ruleForm" :rules="rules" label-width="140px">
       <el-form-item label="合作商名称" prop="name">
         <el-input v-model="ruleForm.name" placeholder="请输入" maxlength="10" show-word-limit />
       </el-form-item>
@@ -23,9 +24,11 @@
       <el-form-item v-if="!ruleForm.id" label="密码" prop="password">
         <el-input v-model="ruleForm.password" placeholder="请输入" maxlength="20" show-word-limit />
       </el-form-item>
-      <el-form-item>
-        <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" @click="sure">确认</el-button>
+      <el-form-item class="marginLeftZero">
+        <el-row type="flex" justify="center">
+          <el-col :span="4"> <el-button @click="handleClose">取消</el-button></el-col>
+          <el-col :span="4"> <el-button type="warning" @click="sure">确认</el-button></el-col>
+        </el-row>
 
       </el-form-item>
     </el-form>
@@ -106,6 +109,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep .marginLeftZero{
+  .is-justify-center{
+    margin-left:-140px;
+  }
+}
+::v-deep .el-form{
+  .el-form-item__content{
+    width: 396px;
+  }
+}
+::v-deep  .el-dialog{
+  border-radius: 10px;
+}
 ::v-deep .el-form-item__content{
     margin-bottom: 20px;
 }
