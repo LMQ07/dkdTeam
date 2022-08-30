@@ -118,7 +118,7 @@
 </template>
 
 <script>
-import { getTaskReportInfo, getCollectReport, getRegionList } from '@/api/user'
+import { getTaskReportInfo, getCollectReport, getRegionList, getUserWorkTopApi } from '@/api/user'
 import { getTime, currmonthStarttime } from '@/utils/time'
 export default {
   data() {
@@ -136,7 +136,9 @@ export default {
       pageIndex: 1,
       pageSize: 100000,
       regionList: [], // 区域列表
-      vale: '全部'
+      vale: '全部',
+      isRepair: 'false',
+      id: 0
     }
   },
   computed: {
@@ -174,14 +176,20 @@ export default {
       this.changeStyle = val
       if (val === 'day') {
         this.formInline.value1 = this.getDateTime()
+        // console.log(this.formInline.value1)
       }
       if (val === 'month') {
         const res = currmonthStarttime(new Date())
         this.formInline.value1 = [res, getTime(new Date())]
+        // console.log(this.formInline.value1)
+      }
+      if (val === 'year') {
+        const year = this.yearStart()
+        this.formInline.value1 = [year, getTime(new Date())]
+        // console.log(this.formInline.value1)
       }
     },
     getDateTime() {
-      // console.log([new Date(new Date().getTime() - 3600 * 1000 * 24 * 1).getTime(), new Date().getTime()])
       return [new Date(new Date().getTime() - 3600 * 1000 * 24 * 1).getTime(), new Date().getTime()]
     },
     async  dateChange(val) {
@@ -219,6 +227,29 @@ export default {
     },
     changeList(val) {
       this.changeStyle1 = val
+      if (val === 'yy') {
+        this.isRepair = 'false'
+      }
+      if (val === 'yw') {
+        this.isRepair = 'true'
+      }
+      this.getUserWorkTopApi()
+    },
+    // 当今年的第一天
+    yearStart() {
+      // 获取今年第一天
+      var date1 = new Date()
+      var year1 = date1.getFullYear()
+      return year1 + '-' + '01' + '-' + '01'
+    },
+    // 获取前十
+    async getUserWorkTopApi() {
+      try {
+        const res = await getUserWorkTopApi(currmonthStarttime(new Date()), getTime(new Date()), this.isRepair, this.id)
+        console.log(res)
+      } catch (e) {
+        console.log(e)
+      }
     }
 
   }

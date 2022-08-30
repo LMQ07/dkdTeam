@@ -44,3 +44,10 @@ export function getRegionList(params) {
     params
   })
 }
+
+// 人员排名
+export function getUserWorkTopApi(start, end, isRepair, regionId) {
+  return request({
+    url: `task-service/task/userWorkTop10/${start}/${end}/${isRepair}/${regionId}`
+  })
+}
