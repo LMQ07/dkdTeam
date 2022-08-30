@@ -17,6 +17,11 @@
     </el-card>
 
     <el-card>
+
+      <div class="addBtn">
+        <el-button icon="el-icon-circle-plus-outline" type="warning" size="small" @click="addParnter">新建</el-button>
+      </div>
+
       <Table
         :thead="thead"
         :table-date="tableData"
@@ -26,25 +31,28 @@
         @click="click"
       >
         <template v-slot:action="{row}">
-          <el-button type="text">重置密码</el-button>
-          <el-button type="text">查看详情</el-button>
-          <el-button type="text">修改</el-button>
-          <el-button type="text">删除</el-button>
+          <el-button type="text" @click="resetPassword(row.row)">重置密码</el-button>
+          <el-button type="text" @click="checkDetail(row.row)">查看详情</el-button>
+          <el-button type="text" @click="edit(row.row)">修改</el-button>
+          <el-button type="text" @click="delePartner(row.row)">删除</el-button>
         </template>
       </Table>
+
     </el-card>
-    <partner />
+    <partner ref="partner" :partner-visible.sync="partnerVisible" @refresh="partnerSearchGet" />
+    <partnerDetail :detail-visible.sync="detailVisible" :detail-data="detailData" />
   </div>
 </template>
 
 <script>
 // import myTable from '@/components/Table'
-import { partnerSearchGet } from '@/api/nodePartner'
+import { partnerSearchGet, partnerResetPwd, userServicePartnerDel } from '@/api/nodePartner'
 import partner from './components/partner.vue'
+import partnerDetail from './components/partnerDetail.vue'
 export default {
   name: 'NodePartner',
   // components: { myTable },
-  components: { partner },
+  components: { partner, partnerDetail },
   data() {
     return {
       page: {
@@ -85,7 +93,10 @@ export default {
           prop: 'action',
           slotName: 'action'
         }
-      ]
+      ],
+      partnerVisible: false,
+      detailVisible: false,
+      detailData: {}
     }
   },
   mounted() {
@@ -108,11 +119,53 @@ export default {
     },
     search() {
       this.partnerSearchGet()
+    },
+    addParnter() {
+      this.partnerVisible = true
+    },
+    edit(row) {
+      console.log('row88888', row)
+      this.partnerVisible = true
+      this.$refs.partner.ruleForm = row
+    },
+    checkDetail(row) {
+      this.detailVisible = true
+      this.detailData = row
+    },
+    resetPassword(row) {
+      this.$confirm('确定要重置合作商密码吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async() => {
+        await partnerResetPwd(row.id)
+        this.partnerSearchGet()
+        this.$message({
+          type: 'success',
+          message: '重置密码成功!'
+        })
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      })
+    },
+    async  delePartner(row) {
+      try {
+        await userServicePartnerDel(row.id)
+        this.partnerSearchGet()
+        this.$message.success('删除成功')
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 }
 </script>
 
 <style>
-
+.addBtn{
+  margin-bottom: 20px;
+}
 </style>

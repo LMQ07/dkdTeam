@@ -3,9 +3,10 @@
     :title="personForm.id?'编辑人员':'新增人员'"
     :visible.sync="personVisible"
     :before-close="handleClose"
+    width="630px"
   >
-    <el-form ref="personForm" :model="personForm" label-width="100px" :rules="personRules">
-      <el-form-item label="人员名称" prop="userName" label-width="100px">
+    <el-form ref="personForm" :model="personForm" label-width="140px" :rules="personRules">
+      <el-form-item label="人员名称" prop="userName">
         <el-input v-model="personForm.userName" maxlength="5" show-word-limit placeholder="请输入" />
       </el-form-item>
       <el-form-item label="角色" prop="roleId">
@@ -41,9 +42,12 @@
         <el-checkbox v-model="personForm.status" label="是否启用" name="type" />
       </el-form-item>
 
-      <el-form-item size="large">
-        <el-button @click="handleClose">取消</el-button>
-        <el-button type="primary" @click="submitPerson">确定</el-button>
+      <el-form-item size="large" class="marginLeftZero">
+        <el-row type="flex" justify="center">
+          <el-col :span="4"> <el-button @click="handleClose">取消</el-button></el-col>
+          <el-col :span="4"> <el-button type="warning" @click="submitPerson">确定</el-button></el-col>
+        </el-row>
+
       </el-form-item>
 
     </el-form>
@@ -181,8 +185,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+::v-deep  .el-dialog{
+  border-radius: 10px;
+}
 ::v-deep .el-form-item__content{
     margin-bottom: 20px;
+}
+::v-deep .marginLeftZero{
+  .is-justify-center{
+    margin-left:-140px;
+  }
+}
+::v-deep .el-form{
+  .el-form-item__content{
+    width: 396px;
+  }
+  .el-input__inner{
+    width: 396px;
+  }
 }
 ::v-deep  .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;

@@ -1,6 +1,6 @@
 <template>
   <el-dialog
-    title="合作商"
+    :title="ruleForm.id?'修改合作商':'新增合作商'"
     :visible.sync="partnerVisible"
     :before-close="handleClose"
   >
@@ -17,14 +17,14 @@
       <el-form-item label="分成比例（%）" prop="ratio">
         <el-input v-model="ruleForm.ratio" placeholder="请输入" type="number" />
       </el-form-item>
-      <el-form-item label="账号" prop="account">
+      <el-form-item v-if="!ruleForm.id" label="账号" prop="account">
         <el-input v-model="ruleForm.account" placeholder="请输入" maxlength="18" show-word-limit />
       </el-form-item>
-      <el-form-item label="密码" prop="password">
+      <el-form-item v-if="!ruleForm.id" label="密码" prop="password">
         <el-input v-model="ruleForm.password" placeholder="请输入" maxlength="20" show-word-limit />
       </el-form-item>
       <el-form-item>
-        <el-button>取消</el-button>
+        <el-button @click="handleClose">取消</el-button>
         <el-button type="primary" @click="sure">确认</el-button>
 
       </el-form-item>
@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { userServicePartnerPost } from '@/api/nodePartner'
+import { userServicePartnerPost, userServicePartnerPut } from '@/api/nodePartner'
 export default {
   props: {
     partnerVisible: {
@@ -77,10 +77,29 @@ export default {
   },
   methods: {
     handleClose() {
-
+      this.$emit('update:partnerVisible', false)
+      this.$refs.ruleForm.resetFields()
+      this.ruleForm = {
+        name: '',
+        contact: '',
+        mobile: '',
+        ratio: '',
+        account: '',
+        password: ''
+      }
     },
-    sure() {
+    async sure() {
+      try {
+        await this.$refs.ruleForm.validate()
 
+        this.ruleForm.id ? await userServicePartnerPut(this.ruleForm.id, this.ruleForm) : await userServicePartnerPost(this.ruleForm)// 新增
+
+        this.$message.success(`${this.ruleForm.id ? '编辑' : '修改'}成功`)
+        this.$emit('refresh')
+        this.handleClose()
+      } catch (e) {
+        console.log(e)
+      }
     }
   }
 }

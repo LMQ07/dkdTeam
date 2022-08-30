@@ -5,7 +5,7 @@
         <el-row :gutter="20">
           <el-col :span="6">
             <el-form-item label="人员搜索">
-              <el-input v-model="formData.userName" />
+              <el-input v-model="formData.userName" clearable />
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -29,7 +29,7 @@
       >
         <template v-slot:action="{row}">
           <el-button type="text" @click="edit(row.row)">修改</el-button>
-          <el-button type="text" @click="del(row.row)">删除</el-button>
+          <el-button type="text" :style="{color:'#eb4444'}" @click="del(row.row)">删除</el-button>
         </template>
       </myTable>
     </el-card>
@@ -120,6 +120,7 @@ export default {
     async del(row) {
       try {
         await userServiceUserDel(row.id)
+        this.$message.success('删除成功')
         this.userServiceList()
       } catch (error) {
         this.$message.error(error)
