@@ -139,7 +139,7 @@ export default {
       infoDialogVisible: false,
       rowDetailsInfo: {},
       currentDetails: {},
-      dialogType: "",
+      dialogType: "Bussiness",
     };
   },
   created() {

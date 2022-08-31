@@ -140,6 +140,7 @@ export default {
     },
   },
   created() {
+    console.log(this.dialogType);
     if (this.dialogType == "rebuild") {
       this.taskInfo = JSON.parse(JSON.stringify(this.detailsInfo));
       this.taskInfo.productType = this.detailsInfo.taskType.typeId;
@@ -153,7 +154,8 @@ export default {
       // this.handleClose();
     },
     handleClose() {
-      this.$parent.dialogFormVisible = false;
+      console.log(1);
+      this.$refs.formRef.resetFields();
       this.taskInfo = {
         createType: 1,
         innerCode: "",
@@ -163,7 +165,8 @@ export default {
         assignorId: "",
         details: [],
       };
-      this.$refs.formRef.resetFields();
+      this.$parent.dialogType = "Bussiness";
+      this.$parent.dialogFormVisible = false;
     },
 
     // 向父组件传工单编号
