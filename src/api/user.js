@@ -23,6 +23,22 @@ export function getUserInfo(id) {
   })
 }
 
+// 人员工作量列表
+export function getUserWork(params) {
+  return request({
+    url: '/user-service/user/searchUserWork',
+    params
+  })
+}
+
+// 获取用户工作量(工单统计)
+export function getUserWorkInfo(params) {
+  return request({
+    url: 'task-service/task/userWork',
+    params
+  })
+}
+
 // 获取当时工单汇总信息(人员统计头部信息)
 export function getTaskReportInfo(start, end) {
   return request({
