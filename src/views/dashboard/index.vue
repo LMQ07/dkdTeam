@@ -276,6 +276,14 @@ export default {
         })
         // console.log(dateArr)
         const option = {
+          title: {
+            text: '销售额趋势图',
+            left: 'center'
+          },
+          grid: {
+            left: '2%',
+            containLabel: true
+          },
           xAxis: {
             type: 'category',
             boundaryGap: false,
@@ -288,7 +296,33 @@ export default {
             {
               data: dateArr,
               type: 'line',
-              areaStyle: {}
+              smooth: true,
+              symbol: 'circle',
+              itemStyle: {
+                color: 'white',
+                borderColor: 'red'
+              },
+              lineStyle: {
+                color: 'red'
+              },
+              areaStyle: {
+                color: {
+                  type: 'linear',
+                  x: 0,
+                  y: 0,
+                  x2: 0,
+                  y2: 1,
+                  colorStops: [{ // 渐变颜色
+                    offset: 0,
+                    color: 'rgba(234,151,27,0.52)'
+                  },
+                  {
+                    offset: 1,
+                    color: 'rgba(230,162,60,0.09)'
+                  }],
+                  global: false
+                }
+              }
             }
           ]
         }
@@ -302,6 +336,14 @@ export default {
       const res = await getSaleTotal(this.start, this.end)
       // console.log(res)
       const option = {
+        title: {
+          text: '销售额分布图',
+          left: 'center'
+        },
+        grid: {
+          left: '2%',
+          containLabel: true
+        },
         xAxis: {
           type: 'category',
           data: res.data.xAxis
@@ -312,7 +354,11 @@ export default {
         series: [
           {
             data: res.data.series,
-            type: 'bar'
+            type: 'bar',
+            itemStyle: {
+              borderRadius: [11, 11, 0, 0]
+            },
+            barWidth: 16
           }
         ]
       }
