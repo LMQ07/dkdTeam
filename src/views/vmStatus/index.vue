@@ -32,7 +32,7 @@
         </template>
       </Table>
     </div>
-    <detailDialog :dialog-visible="detailShow" />
+    <detailDialog ref="dialog" :dialog-visible="detailShow" :row-detail="rowDetail" />
   </div>
 </template>
 
@@ -117,7 +117,9 @@ export default {
     },
     showDetail(row) {
       this.detailShow = true
-      this.rowDetail = row
+      this.rowDetail = row.row
+      console.log(row)
+      this.$refs.dialog.getDate()
     }
   }
 }
@@ -130,6 +132,10 @@ export default {
   height: 64px;
   margin-bottom: 20px;
   padding-left: 17px;
+  background-color: #fff;
+}
+.result{
+  padding: 20px 15px 19px 17px;
   background-color: #fff;
 }
 .el-table_1_column_6{
