@@ -96,3 +96,26 @@ export function getGoodsNumMQ(innerCode, start, end) {
     url: `order-service/report/skuCollect/${innerCode}/${start}/${end}`
   })
 }
+// 删除售货机类型
+export function delectVmType(typeId) {
+  return request({
+    url: `vm-service/vmType/${typeId}`,
+    method: 'DELETE'
+  })
+}
+// 上传信息
+export function addVmType(data) {
+  return request({
+    url: 'vm-service/vmType',
+    method: 'POST',
+    data
+  })
+}
+// 删除售货机类型
+export function changeVmType(typeId, data) {
+  return request({
+    url: `vm-service/vmType/${typeId}`,
+    method: 'PUT',
+    data
+  })
+}

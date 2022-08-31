@@ -23,7 +23,7 @@
           <el-avatar src="https://pics3.baidu.com/feed/cf1b9d16fdfaaf51055aeb850e4a2de7f01f7a73.jpeg?token=13a989ae26c8c26689240bf4a3c776a0" />
         </template> -->
         <template v-slot:action="{row}">
-          <el-button type="text">
+          <el-button type="text" @click="showGoodsRoad(row)">
             货道
           </el-button>
           <el-button type="text" @click="setOneRow(row)">
@@ -39,6 +39,7 @@
     <addNew :dialog-visible="isShowNewAdd" />
     <change :dialog-visible="changeShow" :row-detail="changeRow" />
     <showStragory :dialog-visible="showAction" :current-stragory="currentStragory" />
+    <goodsRoad :dialog-visible.sync="showRoad" />
   </div>
 </template>
 
@@ -48,12 +49,14 @@ import setAllCheck from './components/setAllCheck.vue'
 import addNew from './components/addNew.vue'
 import change from './components/change.vue'
 import showStragory from './components/showStragory.vue'
+import goodsRoad from './components/goodsRoad.vue'
 export default {
   components: {
     setAllCheck,
     addNew,
     change,
-    showStragory
+    showStragory,
+    goodsRoad
   },
   data() {
     return {
@@ -80,6 +83,7 @@ export default {
       changeShow: false,
       changeRow: {},
       showAction: false,
+      showRoad: true,
       currentStragory: {}
     }
   },
@@ -208,6 +212,10 @@ export default {
     showDialog(row) {
       this.changeShow = true
       this.changeRow = row.row
+      console.log(row.row)
+    },
+    showGoodsRoad(row) {
+      this.showRoad = true
       console.log(row.row)
     }
   }

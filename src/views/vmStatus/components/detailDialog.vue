@@ -21,6 +21,15 @@
     </div>
     <div class="bottom">
       <p class="title">商品销量（月）</p>
+      <div v-if="saleList.length === 0" class="no-Number" style="text-align:center">
+        暂无数据
+      </div>
+      <div v-else class="box">
+        <div v-for="item,index in saleList" :key="index" class="item" :class="`${[0,1,2,3].includes(index) ? 'topline':''}`">
+          <div class="sku-name" style="width:50%">{{ item.skuName }}</div>
+          <div style="width:50%">{{ item.count }}</div>
+        </div>
+      </div>
     </div>
   </el-dialog>
 </template>
@@ -107,6 +116,31 @@ export default {
 .bottom {
   .title{
     margin: 20px 0 12px 6px;
+  }
+  .box{
+    display: flex;
+    flex-wrap: wrap;
+    border-left: 1px solid #d8dde3;
+    .no-Number{
+      display: flex;
+      justify-content: center;
+    }
+    .item{
+    width:25%;
+    padding: 0 10px;
+    line-height: 40px;
+    border-right: 1px solid #d8dde3;
+    border-bottom: 1px solid #d8dde3;
+    display: flex;
+    &.topline{
+      border-top: 1px solid #d8dde3;
+    }
+    .sku-name{
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    }
+    }
   }
 }
 </style>

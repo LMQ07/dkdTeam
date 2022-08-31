@@ -134,6 +134,10 @@ export default {
   padding-left: 17px;
   background-color: #fff;
 }
+.result{
+  padding: 20px 15px 19px 17px;
+  background-color: #fff;
+}
 .el-table_1_column_6{
   width:300px;
 }
