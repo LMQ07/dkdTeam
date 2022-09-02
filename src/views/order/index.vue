@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="search">
-      <el-form inline="true">
+      <el-form :inline="true">
         <el-form-item label="订单编号:">
           <el-input v-model="search.orderNo" placeholder="请输入订单编号" class="order-id" clearable />
         </el-form-item>
@@ -112,7 +112,6 @@ export default {
       totalPage: 1,
       value1: '',
       search: {
-
         orderNo: '',
         startDate: '',
         endDate: ''

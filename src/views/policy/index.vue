@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-container">
     <div class="search">
-      <el-form inline="true">
+      <el-form :inline="true">
         <el-form-item label="策略搜索:">
           <el-input v-model="search.orderNo" placeholder="请输入" class="order-id" clearable />
         </el-form-item>
