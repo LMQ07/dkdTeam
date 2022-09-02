@@ -61,7 +61,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .container{
   display: flex;
   align-items: center;
@@ -124,6 +124,12 @@ export default {
       align-items: center;
       justify-content: center;
     }
+    }
+    .el-carousel{
+      min-height: 384px;
+    }
+    .el-carousel__container{
+     min-height: 370px;
     }
   }
 
