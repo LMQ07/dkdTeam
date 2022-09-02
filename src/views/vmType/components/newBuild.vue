@@ -35,8 +35,7 @@
           <el-input-number v-model="form.channelMaxCapacity" placeholder="请输入" controls-position="right" :min="1" :max="10" />
         </el-form-item>
         <el-form-item label="设备图片：" prop="image">
-          <uploadImage ref="images" @onSuccess="onSuccess" />
-          <input ref="imgIpt" v-model="form.image" type="text" hidden>
+          <uploadImage ref="images" :img.sync="form.image" />
           <div class="tip">支持扩展名：jpg、png，文件不得大于100kb
           </div>
         </el-form-item>
@@ -140,13 +139,14 @@ export default {
         this.handleClose()
         this.$parent.getDate()
       }
-    },
-    onSuccess(data) {
-      // 拿到了地址
-      this.$refs.imgIpt.focus()
-      this.form.image = data && data.url
-      this.$refs.imgIpt.blur()
     }
+    // onSuccess(url) {
+    //   // 拿到了地址
+    //   // this.$refs.imgIpt.focus()
+    //   this.form.image = url
+    //   console.log(this.form.image)
+    //   // this.$refs.imgIpt.blur()
+    // }
   }
 
 }
