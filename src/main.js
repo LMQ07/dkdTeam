@@ -24,6 +24,11 @@ Object.keys(directives).forEach(key => {
 })
 import component from './components'
 Vue.use(component)
+
+import * as filters from '@/filters'
+Object.keys(filters).forEach(ele => {
+  Vue.filter(ele, filters[ele])
+})
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
