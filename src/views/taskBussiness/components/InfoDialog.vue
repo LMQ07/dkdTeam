@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-dialog
-      title="工单信息"
+      title="详情信息"
       :visible="infoDialogVisible"
       width="630px"
       :before-close="handleClose"
@@ -16,12 +16,12 @@
       <div class="detail-two">
         <el-row>
           <el-col :span="12">
-            <span>设备编号:{{ detailsInfo.innerCode }}</span>
-            <span></span>
+            <span>设备编号:</span>
+            <span>{{ detailsInfo.innerCode }}</span>
           </el-col>
           <el-col :span="12">
-            <span>创建日期:{{ detailsInfo.createTime }}</span>
-            <span></span>
+            <span>创建日期:</span>
+            <span>{{ detailsInfo.createTime }}</span>
           </el-col>
         </el-row>
         <el-row>
@@ -30,16 +30,16 @@
             <span>{{ detailsInfo.updateTime }}</span>
           </el-col>
           <el-col :span="12">
-            <span>运营人员: {{ detailsInfo.userName }}</span>
-            <span></span>
+            <span>运营人员: </span>
+            <span>{{ detailsInfo.userName }}</span>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="12">
-            <span>工单类型: {{ taskType }}</span>
-            <span></span>
+            <span>工单类型: </span>
+            <span>{{ taskType }}</span>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="12" v-if="formType == 'Bussiness'">
             <span>补货数量: </span>
             <!-- taskId -->
             <span
@@ -48,13 +48,15 @@
               >补货详情</span
             >
           </el-col>
+          <el-col :span="12" v-else>
+            <span>工单方式: </span>
+            <span>{{ detailsInfo.createType == 0 ? "自动" : "手动" }}</span>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="12">
-            <span
-              >工单方式:{{ detailsInfo.createType == 0 ? "自动" : "手动" }}
-            </span>
-            <span></span>
+          <el-col :span="12" v-if="formType == 'Bussiness'">
+            <span>工单方式: </span>
+            <span>{{ detailsInfo.createType == 0 ? "自动" : "手动" }}</span>
           </el-col>
           <el-col :span="12">
             <span>{{ id == 3 ? "取消原因" : "备注" }}: </span>
@@ -63,7 +65,16 @@
         </el-row>
       </div>
       <el-row class="button-two-detail">
-        <el-button>取消工单</el-button>
+        <el-button
+          @click="handleCancel"
+          v-if="detailsInfo.taskStatusTypeEntity.statusId == 1"
+          >取消工单</el-button
+        >
+        <el-button
+          @click="rebuild"
+          v-if="detailsInfo.taskStatusTypeEntity.statusId == 3"
+          >重新创建</el-button
+        >
       </el-row>
     </el-dialog>
     <ReplenishInfoDialog
@@ -71,12 +82,37 @@
       :replenishInfo="replenishInfo"
       :dataLabel="dataLabel"
     />
+    <NewDialog
+      :dialogFormVisible="dialogFormVisible"
+      :taskTypeOption="taskTypeLabel"
+      dialogType="rebuild"
+      :detailsInfo="detailsInfo"
+      :operatorList="operatorList"
+      @getTaskInfo="taskRequest"
+      @showChannelDialog="showChannelDialog"
+      v-if="dialogFormVisible"
+    />
+    <ChannelListDialog
+      :channelVisible="channelVisible"
+      :channelList="channelList"
+      v-if="channelVisible"
+      :channelLabel="channelLabel"
+      @sendDetails="getDetails"
+    />
   </div>
 </template>
 
 <script>
-import { getreplenishInfo } from "@/api/task";
+import {
+  getreplenishInfo,
+  cancelTask,
+  getOperatorListAPI,
+  getChannelListAPI,
+  createTaskAPI,
+} from "@/api/task";
 import ReplenishInfoDialog from "./ReplenishInfoDialog.vue";
+import NewDialog from "./NewDialog";
+import ChannelListDialog from "./ChannelListDialog.vue";
 export default {
   name: "Detail",
   props: {
@@ -88,15 +124,24 @@ export default {
       type: Object,
       default: () => ({}),
     },
+    formType: {
+      type: String,
+      default: "Bussiness",
+    },
   },
   components: {
     ReplenishInfoDialog,
-  },
+    NewDialog,
+    ChannelListDialog,
+  }, // 表单类型
+
   data() {
     return {
       replenishInfo: [],
       channelLabel: [],
       replenishInfoDialogVisible: false,
+      dialogFormVisible: false,
+      channelVisible: false,
       dataLabel: [
         {
           prop: "channelCode",
@@ -111,6 +156,14 @@ export default {
           label: "补货数量",
         },
       ],
+      // 工单类型
+      taskTypeLabel: [],
+      // 运营人员
+      operatorList: [],
+      channelList: [],
+      channelLabel: [],
+      details: [],
+      taskInfo: [],
     };
   },
   created() {
@@ -126,6 +179,80 @@ export default {
       this.replenishInfo = res;
       console.log(res);
       this.replenishInfoDialogVisible = true;
+    },
+    // 取消工单
+    handleCancel() {
+      this.$confirm("取消工单后，将不能恢复，是否确认取消？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "error",
+      }).then(async () => {
+        await cancelTask({ taskId: this.detailsInfo.taskId, desc: "" });
+        this.$parent.getTaskList();
+        this.handleClose();
+        this.$message({
+          type: "success",
+          message: "取消成功!",
+        });
+      });
+    },
+    // 重新创建
+    async rebuild() {
+      if (this.formType == "Bussiness") {
+        this.taskTypeLabel = [{ label: "补货工单", value: 2 }];
+        const { data: res } = await getOperatorListAPI(
+          this.detailsInfo.innerCode
+        );
+        console.log(res);
+        this.operatorList = res;
+        this.dialogFormVisible = true;
+      } else {
+        this.$emit("rebuildTask");
+      }
+    },
+    showChannelDialog() {
+      this.channelLabel = [
+        { label: "货道编号", prop: "channelCode" },
+        { label: "商品名称", prop: "sku.skuName", slotName: "skuName" },
+        {
+          label: "当前数量",
+          prop: "currentCapacity",
+          slotName: "currentCapacity",
+        },
+        { label: "还可添加", prop: "num", slotName: "num" },
+        { label: "补满商品", prop: "buhuo", slotName: "buhuo" },
+      ];
+      this.channelVisible = true;
+      this.getChannelList();
+    },
+    // 获取货道详情列表
+    async getChannelList() {
+      const { data: res } = await getChannelListAPI(this.detailsInfo.innerCode);
+      this.channelList = res;
+      this.channelList.forEach((item, index) => {
+        let num = item.maxCapacity - item.currentCapacity;
+        this.$set(this.channelList[index], "expectCapacity", num);
+        this.$set(this.channelList[index], "num", num);
+      });
+
+      console.log(res);
+
+      this.channelVisible = true;
+    },
+    getDetails(val) {
+      console.log(val);
+      this.details = val;
+    },
+    // 新增工单或重建工单
+    async taskRequest(taskInfo) {
+      this.taskInfo = taskInfo;
+      this.taskInfo.details = this.details;
+      const res = await createTaskAPI(this.taskInfo);
+      this.$parent.getTaskList();
+      console.log(res);
+      this.$children[2].handleClose();
+      this.$parent.infoDialogVisible = false;
+      this.$message.success("创建成功");
     },
   },
   computed: {
@@ -163,7 +290,16 @@ export default {
       }
     },
     taskType() {
-      return this.detailsInfo.taskType.typeId == 2 ? "补货工单" : "";
+      let typeId = this.detailsInfo.taskType.typeId;
+      if (typeId == 1) {
+        return "投放工单";
+      } else if (typeId == 2) {
+        return "补货工单";
+      } else if (typeId == 3) {
+        return "维修工单";
+      } else if (typeId == 4) {
+        return "撤机工单";
+      }
     },
   },
 };

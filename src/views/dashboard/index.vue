@@ -564,7 +564,7 @@ export default {
       justify-content: space-between;
     }
 
-    .week-month-year {
+    .week-month-year  {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -750,7 +750,7 @@ export default {
       }
 
     }
-    .main{
+    .main {
       display: flex;
       height: 260px;
       flex-direction: column;
