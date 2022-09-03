@@ -11,14 +11,21 @@
         :total-count="totalCount"
         :page-index="pageIndex"
         :total-page="totalPage"
-         @click="changeIndex"
+        @click="changeIndex"
       >
         <template v-slot:action="{ row }">
           <el-button type="text" @click="amendMerchandise(row.row)">修改</el-button>
           <el-button style="color: red" type="text" @click="deleSke(row.row.classId)">删除</el-button>
         </template>
       </Table>
-         <AddSku :showDialog.sync='showDialogBtn' @QueBtn='queskuBtn' :show-before="true" ref="roleForm" :nameFn='name' @clickqr="clickQr"></AddSku>
+      <AddSku
+        :showDialog.sync="showDialogBtn"
+        @QueBtn="queskuBtn"
+        :show-before="true"
+        ref="roleForm"
+        :nameFn="name"
+        @clickqr="clickQr"
+      ></AddSku>
     </div>
   </div>
 </template>
@@ -43,8 +50,8 @@ export default {
       btnShow: false,
       theadFn: [
         { label: '商品类型名称', prop: 'className' },
-        { label: '操作', slotName: 'action' }
-      ]
+        { label: '操作', slotName: 'action' },
+      ],
     }
   },
   mounted() {
@@ -53,7 +60,8 @@ export default {
   methods: {
     async GetSkuClass() {
       const { data } = await getSkuClass({
-        pageIndex: this.pageIndex, pageSize: this.pageSize
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize,
       })
       // console.log(data)
       this.totalPage = data.totalPage
@@ -106,20 +114,24 @@ export default {
       console.log(111)
       console.log(this.rowF)
       // await updateRole({ ...className, id: className.classId })
-      await updateRole({ ...this.rowF, id: this.rowF.classId, className: value })
+      await updateRole({
+        ...this.rowF,
+        id: this.rowF.classId,
+        className: value,
+      })
       this.GetSkuClass()
     },
     async Search(value) {
       console.log(9)
       const { data } = await getSkuClass({
-        className: value
+        className: value,
       })
       console.log(data)
       this.totalPage = data.totalPage
       this.totalCount = data.totalCount
       this.tableDate = data.currentPageRecords
-    }
-  }
+    },
+  },
 }
 </script>
 
