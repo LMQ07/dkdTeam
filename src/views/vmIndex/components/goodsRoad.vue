@@ -1,62 +1,69 @@
 <template>
-  <el-dialog
-    title="货道设置"
-    :visible.sync="dialogVisible"
-    width="940px"
-    :before-close="handleClose"
-  >
-    <div class="container">
-      <div class="channel-list">
-        <el-row>
-          <el-col :span="3" class="right">货道行数：{{ roadNumber.vmCol }}</el-col>
-          <el-col :span="4" class="right">货道列数：{{ roadNumber.vmRow }}</el-col>
-          <el-col :span="12" class="middle">货道容量（个）：{{ roadNumber.channelMaxCapacity }}</el-col>
-          <el-col :span="5" class="left">
-            <el-button type="primary" size="medium">智能排货</el-button>
-          </el-col>
-        </el-row>
+  <div>
+    <el-dialog
+      title="货道设置"
+      :visible.sync="dialogVisible"
+      width="940px"
+      :before-close="handleClose"
+    >
+      <div class="container">
+        <div class="channel-list">
+          <el-row>
+            <el-col :span="3" class="right">货道行数：{{ roadNumber.vmCol }}</el-col>
+            <el-col :span="4" class="right">货道列数：{{ roadNumber.vmRow }}</el-col>
+            <el-col :span="12" class="middle">货道容量（个）：{{ roadNumber.channelMaxCapacity }}</el-col>
+            <el-col :span="5" class="left">
+              <el-button type="primary" size="medium" @click="showItelligentRoad">智能排货</el-button>
+            </el-col>
+          </el-row>
+        </div>
+
+        <div class="img-container">
+          <el-carousel trigger="click" :autoplay="false">
+            <el-carousel-item v-for="(item, index) in resultList" :key="index">
+              <el-scrollbar
+                :noresize="true"
+                style="height: 100%;"
+              >
+                <div type="flex">
+                  <el-col v-for="item1 in item" :key="item1.id" :span="4" class="item">
+                    <div class="img">
+                      <el-image :src="item1&& item1.sku && item1.sku.skuImage" alt="">
+                        <div slot="error" class="image-slot">
+                          <i class="el-icon-picture-outline" />
+                        </div>
+                      </el-image>
+                      <p> {{ item1.sku && item1.sku.brandName }} </p>
+                      <p class="channelCode">{{ item1.channelCode }}</p>
+                    </div>
+                    <div class="button">
+                      <el-button type="text">
+                        添加
+                      </el-button>
+                      <el-button type="text" style="color: red" @click="delBtn(index)">
+                        删除
+                      </el-button>
+                    </div>
+                  </el-col>
+                </div>
+              </el-scrollbar>
+            </el-carousel-item>
+          </el-carousel>
+        </div>
+        <div class="btn">
+          <el-button class="newBuild">确认</el-button>
+        </div>
       </div>
-
-      <div class="img-container">
-        <el-carousel trigger="click" :autoplay="false">
-          <el-carousel-item v-for="(item, index) in resultList" :key="index">
-            <el-scrollbar
-              :noresize="true"
-              style="height: 100%;"
-            >
-              <div type="flex">
-                <el-col v-for="item1 in item" :key="item1.id" :span="4" class="item">
-                  <div class="img">
-                    <el-image :src="item1&& item1.sku && item1.sku.skuImage" alt="">
-                      <div slot="error" class="image-slot">
-                        <i class="el-icon-picture-outline" />
-                      </div>
-                    </el-image>
-                    <p> {{ item1.sku && item1.sku.brandName }} </p>
-                    <p class="channelCode">{{ item1.channelCode }}</p>
-                  </div>
-                  <div class="button">
-                    <el-button type="text">
-                      添加
-                    </el-button>
-                    <el-button type="text" style="color: red" @click="delBtn(index)">
-                      删除
-                    </el-button>
-                  </div>
-                </el-col>
-              </div>
-            </el-scrollbar>
-          </el-carousel-item>
-        </el-carousel>
-      </div>
-
-    </div>
-
-  </el-dialog>
+    </el-dialog>
+    <IntelligentRoadVue :intelligent-road-list="IntelligentRoadList" :visible.sync="showRoad" @getSuggestRoad="getSuggestRoad" />
+  </div>
 </template>
 
 <script>
+import IntelligentRoadVue from './IntelligentRoad.vue'
+import { getIntelligentRoad } from '@/api/vm'
 export default {
+  components: { IntelligentRoadVue },
   props: {
     dialogVisible: {
       type: Boolean,
@@ -69,6 +76,16 @@ export default {
     roadNumber: {
       type: Object,
       default: () => ({})
+    },
+    businessId: {
+      type: [Number, String],
+      default: null
+    }
+  },
+  data() {
+    return {
+      showRoad: false,
+      IntelligentRoadList: []
     }
   },
   computed: {
@@ -88,6 +105,16 @@ export default {
   methods: {
     handleClose() {
       this.$emit('update:dialogVisible', false)
+    },
+    async showItelligentRoad() {
+      this.showRoad = true
+      const res = await getIntelligentRoad(this.businessId)
+      console.log(res.data)
+      this.IntelligentRoadList = res.data
+    },
+    getSuggestRoad(obj) {
+      // 获取到当前的智能排货的列表
+      console.log(obj)
     }
   }
 
@@ -189,5 +216,10 @@ export default {
     }
   }
 }
-
+.btn{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 15px;
+}
 </style>

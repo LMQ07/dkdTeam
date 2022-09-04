@@ -133,3 +133,9 @@ export function getRoadNumber(id) {
     method: 'GET'
   })
 }
+// 获取智能排序的内容
+export function getIntelligentRoad(id) {
+  return request({
+    url: `vm-service/sku/businessTop10/${id}`
+  })
+}

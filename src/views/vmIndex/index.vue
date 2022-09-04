@@ -39,7 +39,7 @@
     <addNew :dialog-visible="isShowNewAdd" />
     <change :dialog-visible="changeShow" :row-detail="changeRow" />
     <showStragory :dialog-visible="showAction" :current-stragory="currentStragory" />
-    <goodsRoad :road-number="roadNumber" :goods-road-list="goodsRoadList" :dialog-visible.sync="showRoad" />
+    <goodsRoad :business-id="businessId" :road-number="roadNumber" :goods-road-list="goodsRoadList" :dialog-visible.sync="showRoad" />
   </div>
 </template>
 
@@ -87,7 +87,8 @@ export default {
       showRoad: false,
       currentStragory: {},
       goodsRoadList: [],
-      roadNumber: {}
+      roadNumber: {},
+      businessId: ''
     }
   },
   computed: {
@@ -227,6 +228,7 @@ export default {
       console.log(row)
       const res = await getRoadNumber(row.type && row.type.typeId)
       this.roadNumber = res.data
+      this.businessId = row.businessId
       console.log(res)
     }
   }
