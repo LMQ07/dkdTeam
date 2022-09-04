@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div class="dashboard-container123">
     <div class="dashboard-text">
       <el-row>
         <el-col :span="18">
@@ -174,7 +174,7 @@
               <span class="title">异常设备监控</span>
             </div>
             <div class="main">
-              <img src="@/assets/images/404.png" alt="">
+              <img src="@/assets/images/404.png" alt="" />
               <span class="no">暂无数据</span>
             </div>
           </el-card>
@@ -192,12 +192,12 @@ import {
   getTaskReportInfo,
   getMoneyApi,
   getSaleTotal,
-  getTogetherPartner
-} from '@/api/dashboard'
-import echarts from './components/echarts.vue'
+  getTogetherPartner,
+} from "@/api/dashboard";
+import echarts from "./components/echarts.vue";
 export default {
   components: {
-    echarts
+    echarts,
   },
   data() {
     return {
@@ -208,170 +208,170 @@ export default {
       OrderCount: 0, // 销售统计 总数量
       taskCount: [], // 工单统计
       money: 0, // 销售总额
-      changeStyle: 'week',
+      changeStyle: "week",
       saleNumoption: {}, // 获取销售数据趋势
       saleTotaloption: {}, // 销售额分布
       partneroption: {}, // 合作商点位
       partnerList: [], // 合作商列表
-      currentDate: '',
-      week: ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
-      x: '',
-      y: '',
-      saleX: '',
-      saleY: ''
-    }
+      currentDate: "",
+      week: ["星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
+      x: "",
+      y: "",
+      saleX: "",
+      saleY: "",
+    };
   },
   computed: {
     end() {
-      return this.getTime(+new Date())
+      return this.getTime(+new Date());
     },
     start() {
-      return this.currmonthStarttime()
+      return this.currmonthStarttime();
     },
     taskTotal() {
       // 工单总数
       return this.taskCount.reduce((per, cur) => {
-        return per + cur.total
-      }, 0)
+        return per + cur.total;
+      }, 0);
     },
     cancelTask() {
       // 取消工单总数
       return this.taskCount.reduce((per, cur) => {
-        return per + cur.cancelTotal
-      }, 0)
+        return per + cur.cancelTotal;
+      }, 0);
     },
     completedTotal() {
       // 完成工单
       return this.taskCount.reduce((per, cur) => {
-        return per + cur.completedTotal
-      }, 0)
+        return per + cur.completedTotal;
+      }, 0);
     },
     progressTotal() {
       // 进行中的工单
       return this.taskCount.reduce((per, cur) => {
-        return per + cur.progressTotal
-      }, 0)
+        return per + cur.progressTotal;
+      }, 0);
     },
     nodeCount() {
       // 点位数
       return this.partnerList.reduce((per, cur) => {
-        return per + cur.value
-      }, 0)
+        return per + cur.value;
+      }, 0);
     },
     partnerCount() {
       // 合作商总数
-      return this.partnerList.length
-    }
+      return this.partnerList.length;
+    },
   },
   created() {
-    this.getCurrentDate()
-    this.getBussinessTop()
+    this.getCurrentDate();
+    this.getBussinessTop();
     this.getAmountCollect(
       1,
       this.getCurrentWeekMondadyDate(),
       this.currentDate
-    )
-    this.getOrderCount()
-    this.getTaskReportInfo()
-    this.getMoney()
-    this.getSaleTotal(this.getCurrentWeekMondadyDate(), this.currentDate)
-    this.getPartner()
+    );
+    this.getOrderCount();
+    this.getTaskReportInfo();
+    this.getMoney();
+    this.getSaleTotal(this.getCurrentWeekMondadyDate(), this.currentDate);
+    this.getPartner();
   },
   methods: {
     // 获取榜单前十
     async getBussinessTop() {
       try {
-        const res = await getBussinessTop(this.start, this.end)
+        const res = await getBussinessTop(this.start, this.end);
         // console.log(res.data)
-        this.list = res.data
+        this.list = res.data;
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     },
     // 毫秒转年月日
     getTime(timestamp) {
-      const time = new Date(timestamp)
-      const year = time.getFullYear()
-      let month = time.getMonth() + 1
-      let date = time.getDate()
+      const time = new Date(timestamp);
+      const year = time.getFullYear();
+      let month = time.getMonth() + 1;
+      let date = time.getDate();
 
       if (month < 10) {
-        month = '0' + month
+        month = "0" + month;
       }
       if (date < 10) {
-        date = '0' + date
+        date = "0" + date;
       }
-      return year + '-' + month + '-' + date
+      return year + "-" + month + "-" + date;
     },
     // 获取当前月的第一天
     // 获取当前月的第一天 例如 2022-04-01
     currmonthStarttime() {
-      const today = new Date() // 中国标准时间 当前时间
+      const today = new Date(); // 中国标准时间 当前时间
       // 设置一个月的某一天
-      today.setDate(1)
-      const oYear = today.getFullYear()
-      let oMoth = (today.getMonth() + 1).toString()
-      if (oMoth.length <= 1) oMoth = '0' + oMoth
-      let oDay = today.getDate().toString()
-      if (oDay.length <= 1) oDay = '0' + oDay
+      today.setDate(1);
+      const oYear = today.getFullYear();
+      let oMoth = (today.getMonth() + 1).toString();
+      if (oMoth.length <= 1) oMoth = "0" + oMoth;
+      let oDay = today.getDate().toString();
+      if (oDay.length <= 1) oDay = "0" + oDay;
 
-      return oYear + '-' + oMoth + '-' + oDay
+      return oYear + "-" + oMoth + "-" + oDay;
     },
     // 获取销售数据趋势
     async getAmountCollect(type, start, end) {
       try {
-        const res = await getAmountCollect(type, start, end)
-        this.y = res.data.series
+        const res = await getAmountCollect(type, start, end);
+        this.y = res.data.series;
 
-        this.x = res.data.xAxis
+        this.x = res.data.xAxis;
         const dateArr = res.data.series.map((item) => {
-          return parseInt(item / 100)
-        })
-        if (this.changeStyle === 'week') {
-          this.setAmoutOpiton(this.week, this.y)
+          return parseInt(item / 100);
+        });
+        if (this.changeStyle === "week") {
+          this.setAmoutOpiton(this.week, this.y);
         } else {
-          this.setAmoutOpiton(this.x, this.y)
+          this.setAmoutOpiton(this.x, this.y);
         }
         // console.log(dateArr);
         // this.setAmoutOpiton(week, data);
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     },
     setAmoutOpiton(x, y) {
       const option = {
         title: {
-          text: '销售额趋势图',
-          left: 'center'
+          text: "销售额趋势图",
+          left: "center",
         },
         grid: {
-          left: '2%',
-          containLabel: true
+          left: "2%",
+          containLabel: true,
         },
         xAxis: {
-          type: 'category',
+          type: "category",
           boundaryGap: false,
-          data: x
+          data: x,
         },
         yAxis: {
-          type: 'value'
+          type: "value",
         },
         series: [
           {
             data: y,
-            type: 'line',
+            type: "line",
             smooth: true,
-            symbol: 'circle',
+            symbol: "circle",
             itemStyle: {
-              color: 'white',
-              borderColor: 'red'
+              color: "white",
+              borderColor: "red",
             },
             lineStyle: {
-              color: 'red'
+              color: "red",
             },
             areaStyle: {
               color: {
-                type: 'linear',
+                type: "linear",
                 x: 0,
                 y: 0,
                 x2: 0,
@@ -380,103 +380,103 @@ export default {
                   {
                     // 渐变颜色
                     offset: 0,
-                    color: 'rgba(234,151,27,0.52)'
+                    color: "rgba(234,151,27,0.52)",
                   },
                   {
                     offset: 1,
-                    color: 'rgba(230,162,60,0.09)'
-                  }
+                    color: "rgba(230,162,60,0.09)",
+                  },
                 ],
-                global: false
-              }
-            }
-          }
-        ]
-      }
-      this.saleNumoption = option
+                global: false,
+              },
+            },
+          },
+        ],
+      };
+      this.saleNumoption = option;
     },
     //  获取销售额分布
     async getSaleTotal(start, end) {
-      const res = await getSaleTotal(start, end)
-      this.saleX = res.data.xAxis
-      this.saleY = res.data.series
-      this.setSaleOpiton(this.saleX, this.saleY)
-      console.log(res)
+      const res = await getSaleTotal(start, end);
+      this.saleX = res.data.xAxis;
+      this.saleY = res.data.series;
+      this.setSaleOpiton(this.saleX, this.saleY);
+      console.log(res);
     },
     setSaleOpiton(x, y) {
       const option = {
         title: {
-          text: '销售额分布图',
-          left: 'center'
+          text: "销售额分布图",
+          left: "center",
         },
         grid: {
-          left: '2%',
-          containLabel: true
+          left: "2%",
+          containLabel: true,
         },
         xAxis: {
-          type: 'category',
-          data: x
+          type: "category",
+          data: x,
         },
         yAxis: {
-          type: 'value'
+          type: "value",
         },
         series: [
           {
             data: y,
-            type: 'bar',
+            type: "bar",
             itemStyle: {
-              borderRadius: [11, 11, 0, 0]
+              borderRadius: [11, 11, 0, 0],
             },
-            barWidth: 16
-          }
-        ]
-      }
-      this.saleTotaloption = option
+            barWidth: 16,
+          },
+        ],
+      };
+      this.saleTotaloption = option;
     },
     // 获取合作商
     async getPartner() {
-      const res = await getTogetherPartner()
+      const res = await getTogetherPartner();
       // console.log('partner', res.data)
-      this.partnerList = res.data
-      console.log(this.partnerList)
+      this.partnerList = res.data;
+      console.log(this.partnerList);
       const date = res.data.map((item) => {
-        return { name: item['name'], value: item['value'] }
-      })
+        return { name: item["name"], value: item["value"] };
+      });
       // console.log(date)
       const option = {
         legend: {
-          top: 'bottom'
+          top: "bottom",
         },
         toolbox: {
-          show: true
+          show: true,
         },
         series: [
           {
-            name: 'Nightingale Chart',
-            type: 'pie',
+            name: "Nightingale Chart",
+            type: "pie",
             radius: [50, 100],
-            center: ['50%', '50%'],
-            roseType: 'area',
+            center: ["50%", "50%"],
+            roseType: "area",
             itemStyle: {
-              borderRadius: 0
+              borderRadius: 0,
             },
-            data: date
-          }
-        ]
-      }
-      this.partneroption = option
+            data: date,
+          },
+        ],
+      };
+      this.partneroption = option;
     },
     // 获取一定时间范围之内的订单总数
     async getOrderCount() {
       try {
         const res = await getOrderCount({
           start: `${this.start} 00:00:00`,
-          end: `${this.end} 23:59:59`
-        })
+          end: `${this.end} 23:59:59`,
+        });
         // console.log(res.data)
-        this.OrderCount = res.data
+        this.OrderCount = res.data;
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     },
     // 获取当时工单汇总信息 就是工单统计
@@ -485,12 +485,12 @@ export default {
         const res = await getTaskReportInfo(
           `${this.start} 00:00:00`,
           `${this.end} 23:59:59`
-        )
+        );
         // console.log(res.data)
-        this.taskCount = res.data
+        this.taskCount = res.data;
         // console.log(this.taskCount)
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     },
     // 获取销售额
@@ -498,48 +498,48 @@ export default {
       try {
         const res = await getMoneyApi({
           start: `${this.start} 00:00:00`,
-          end: `${this.end} 23:59:59`
-        })
+          end: `${this.end} 23:59:59`,
+        });
         // console.log(res.data)
-        const result = Number(res.data) / 1000000
-        this.money = result.toFixed(2)
+        const result = Number(res.data) / 1000000;
+        this.money = result.toFixed(2);
       } catch (e) {
-        console.log(e)
+        console.log(e);
       }
     },
     // 改变点击年月日的样式
     changeDates(val) {
-      this.changeStyle = val
-      if (this.changeStyle == 'week') {
+      this.changeStyle = val;
+      if (this.changeStyle == "week") {
         this.getAmountCollect(
           1,
           this.getCurrentWeekMondadyDate(),
           this.currentDate
-        )
-        this.getSaleTotal(this.getCurrentWeekMondadyDate(), this.currentDate)
-      } else if (this.changeStyle == 'month') {
-        this.getAmountCollect(1, this.currmonthStarttime(), this.currentDate)
-        this.getSaleTotal(this.currmonthStarttime(), this.currentDate)
+        );
+        this.getSaleTotal(this.getCurrentWeekMondadyDate(), this.currentDate);
+      } else if (this.changeStyle == "month") {
+        this.getAmountCollect(1, this.currmonthStarttime(), this.currentDate);
+        this.getSaleTotal(this.currmonthStarttime(), this.currentDate);
       } else {
-        this.getAmountCollect(1, this.getYearFirst(), this.currentDate)
-        this.getSaleTotal(this.getYearFirst(), this.currentDate)
+        this.getAmountCollect(1, this.getYearFirst(), this.currentDate);
+        this.getSaleTotal(this.getYearFirst(), this.currentDate);
       }
     },
     // 获取当前日期的周一
     getCurrentWeekMondadyDate() {
-      const currentTimeStamp = new Date().getTime() // 获取当天的时间戳
-      const currentWeek = new Date().getDay() === 0 ? 7 : new Date().getDay() // 因为星期天在js里返回的是 0 所以要给他弄成7
-      const daysApartCount = currentWeek - 1 // 用今天星期几 - 1  就得出了 今天星期几 离 当前星期的星期一有多少天
-      const timeStampOfOneDay = 24 * 60 * 60 * 1000 // 计算 一天的时间戳  一共有多少毫秒
-      const countTimeStamp = daysApartCount * timeStampOfOneDay // 用相隔的天数 乘 一天的时间戳（毫秒）得出相隔的天的毫秒
-      const date = new Date(currentTimeStamp - countTimeStamp) // 最后 拿当日的时间戳（毫秒）减去 相隔天数的时间戳（毫秒），放进
+      const currentTimeStamp = new Date().getTime(); // 获取当天的时间戳
+      const currentWeek = new Date().getDay() === 0 ? 7 : new Date().getDay(); // 因为星期天在js里返回的是 0 所以要给他弄成7
+      const daysApartCount = currentWeek - 1; // 用今天星期几 - 1  就得出了 今天星期几 离 当前星期的星期一有多少天
+      const timeStampOfOneDay = 24 * 60 * 60 * 1000; // 计算 一天的时间戳  一共有多少毫秒
+      const countTimeStamp = daysApartCount * timeStampOfOneDay; // 用相隔的天数 乘 一天的时间戳（毫秒）得出相隔的天的毫秒
+      const date = new Date(currentTimeStamp - countTimeStamp); // 最后 拿当日的时间戳（毫秒）减去 相隔天数的时间戳（毫秒），放进
       // new Date 里 他会自动识别时间戳 所对应的 日期
 
       return `${date.getFullYear()}-${
         date.getMonth() + 1 >= 10
           ? date.getMonth() + 1
-          : '0' + (date.getMonth() + 1)
-      }-${date.getDate() >= 10 ? date.getDate() : '0' + date.getDate()}`
+          : "0" + (date.getMonth() + 1)
+      }-${date.getDate() >= 10 ? date.getDate() : "0" + date.getDate()}`;
       // {
       //   // 从而得到 一系列的参数
       //   year: date.getFullYear(),
@@ -549,20 +549,20 @@ export default {
     },
     // 获取当天日期
     getCurrentDate() {
-      const year = new Date().getFullYear()
-      const month = new Date().getMonth() + 1
-      const date = new Date().getDate()
-      this.currentDate = `${year}-${month >= 10 ? month : '0' + month}-${
-        date >= 10 ? date : '0' + date
-      }`
+      const year = new Date().getFullYear();
+      const month = new Date().getMonth() + 1;
+      const date = new Date().getDate();
+      this.currentDate = `${year}-${month >= 10 ? month : "0" + month}-${
+        date >= 10 ? date : "0" + date
+      }`;
     },
     // 获取当年第一天
     getYearFirst() {
-      const year = new Date().getFullYear()
-      return `${year}-01-01`
-    }
-  }
-}
+      const year = new Date().getFullYear();
+      return `${year}-01-01`;
+    },
+  },
+};
 </script>
 <style lang="scss" scoped>
 .dashboard-container {
@@ -668,7 +668,7 @@ export default {
       justify-content: space-between;
     }
 
-    .week-month-year  {
+    .week-month-year {
       display: flex;
       justify-content: center;
       align-items: center;
