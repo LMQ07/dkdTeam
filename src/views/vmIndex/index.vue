@@ -1,6 +1,6 @@
 <template>
   <div class="dashboard-container">
-    <div class="search">
+    <div class="searchIndex">
       <search label="设备编号" @search="searchByInnerCode" />
     </div>
     <div class="result">
