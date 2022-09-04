@@ -39,17 +39,18 @@
     <addNew :dialog-visible="isShowNewAdd" />
     <change :dialog-visible="changeShow" :row-detail="changeRow" />
     <showStragory :dialog-visible="showAction" :current-stragory="currentStragory" />
-    <goodsRoad :dialog-visible.sync="showRoad" />
+    <goodsRoad :goods-road-list="goodsRoadList" :dialog-visible.sync="showRoad" />
   </div>
 </template>
 
 <script>
-import { getVmIndexMsg, submitPolicy, getStragory } from '@/api/vm'
+import { getVmIndexMsg, submitPolicy, getStragory, getGoodsRoad } from '@/api/vm'
 import setAllCheck from './components/setAllCheck.vue'
 import addNew from './components/addNew.vue'
 import change from './components/change.vue'
 import showStragory from './components/showStragory.vue'
 import goodsRoad from './components/goodsRoad.vue'
+
 export default {
   components: {
     setAllCheck,
@@ -83,8 +84,9 @@ export default {
       changeShow: false,
       changeRow: {},
       showAction: false,
-      showRoad: true,
-      currentStragory: {}
+      showRoad: false,
+      currentStragory: {},
+      goodsRoadList: []
     }
   },
   computed: {
@@ -111,7 +113,7 @@ export default {
         innerCode: value
       })
     },
-    async  getVmIndexDate(obj) {
+    async getVmIndexDate(obj) {
       const { data } = await getVmIndexMsg(obj)
       const statusObj = {
         0: '未投放',
@@ -214,16 +216,17 @@ export default {
       this.changeRow = row.row
       console.log(row.row)
     },
-    showGoodsRoad(row) {
+    async showGoodsRoad({ row }) {
       this.showRoad = true
-      console.log(row.row)
+      const res = await getGoodsRoad(row.innerCode)
+      this.goodsRoadList = res.data
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-.search{
+.search {
   display: flex;
   align-items: center;
   height: 64px;
@@ -231,13 +234,15 @@ export default {
   padding-left: 17px;
   background-color: #fff;
 }
-.result{
+
+.result {
   padding: 20px 15px 19px 17px;
   background-color: #fff;
 }
-.detail{
-  span{
-   color: #5f84ff;
+
+.detail {
+  span {
+    color: #5f84ff;
   }
 }
 </style>

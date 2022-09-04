@@ -119,3 +119,10 @@ export function changeVmType(typeId, data) {
     data
   })
 }
+// 获取货道数据
+export function getGoodsRoad(id) {
+  return request({
+    url: `vm-service/channel/channelList/${id}`,
+    method: 'GET'
+  })
+}

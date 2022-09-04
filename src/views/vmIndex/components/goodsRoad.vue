@@ -19,22 +19,33 @@
 
       <div class="img-container">
         <el-carousel trigger="click" :autoplay="false">
-          <el-carousel-item v-for="item in 2" :key="item">
-            <el-row v-for="item1 in 6" :key="item1">
-              <div v-for="index in 5" :key="index" class="item">
-                <div class="img">
-                  <img src="@/assets/images/nogoods.png" alt="">
-                </div>
-                <div class="button">
-                  <el-button type="text">
-                    添加
-                  </el-button>
-                  <el-button type="text" style="color: red">
-                    修改
-                  </el-button>
-                </div>
+          <el-carousel-item v-for="(item, index) in resultList" :key="index">
+            <el-scrollbar
+              :noresize="true"
+              style="height: 100%;"
+            >
+              <div type="flex">
+                <el-col v-for="item1 in item" :key="item1.id" :span="4" class="item">
+                  <div class="img">
+                    <el-image :src="item1&& item1.sku && item1.sku.skuImage" alt="">
+                      <div slot="error" class="image-slot">
+                        <i class="el-icon-picture-outline" />
+                      </div>
+                    </el-image>
+                    <p> {{ item1.sku && item1.sku.brandName }} </p>
+                    <p class="channelCode">{{ item1.channelCode }}</p>
+                  </div>
+                  <div class="button">
+                    <el-button type="text">
+                      添加
+                    </el-button>
+                    <el-button type="text" style="color: red">
+                      修改
+                    </el-button>
+                  </div>
+                </el-col>
               </div>
-            </el-row>
+            </el-scrollbar>
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -50,6 +61,23 @@ export default {
     dialogVisible: {
       type: Boolean,
       default: false
+    },
+    goodsRoadList: {
+      type: Array
+    }
+  },
+  computed: {
+    resultList() {
+      const arr = [[], []]
+      this.goodsRoadList.forEach(item => {
+        const currentCode = +item.channelCode.split('-')[1]
+        if (currentCode >= 6) {
+          arr[1].push(item)
+        } else {
+          arr[0].push(item)
+        }
+      })
+      return arr
     }
   },
   methods: {
@@ -61,76 +89,100 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.container{
+<style lang="scss" scoped>
+.container {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  .channel-list{
+
+  .channel-list {
     width: 847px;
     height: 56px;
     margin-bottom: 16px;
     background: #f3f6fb;
-    .right{
+
+    .right {
       display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    height: 56px;
+      align-items: center;
+      justify-content: flex-end;
+      height: 56px;
     }
-    .middle{
+
+    .middle {
       display: flex;
-    align-items: center;
-    height: 56px;
-    padding: 0 0 0 55px;
+      align-items: center;
+      height: 56px;
+      padding: 0 0 0 55px;
     }
-    .left{
-    display: flex;
-    align-items: center;
-    height: 56px;
+
+    .left {
+      display: flex;
+      align-items: center;
+      height: 56px;
     }
   }
 }
-.img-container{
+
+.img-container {
   width: 814px;
   min-height: 384px;
   margin: 0 auto;
   overflow: hidden;
-  .el-row{
-      display: flex;
-    }
-  .item{
+
+  .el-row {
+    display: flex;
+  }
+
+  .item {
     width: 20%;
     height: 180px;
     background-color: #fff;
     border-radius: 4px;
     padding-left: 8px;
     padding-right: 8px;
-    .img{
-      display:flex;
+
+    .img {
+      display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-    height: 135px;
-    padding-top: 16px;
-    background-color: #f6f7fb;
-    border-radius: 4px;
-    img{
-    width: 84px;
-    height: 78px;
+      height: 135px;
+      padding-top: 16px;
+      background-color: #f6f7fb;
+      border-radius: 4px;
+      position: relative;
+
+      .channelCode {
+        position: absolute;
+        text-indent: 5px;
+        top: -10px;
+        left: 0;
+        width: 43px;
+        height: 23px;
+        line-height: 23px;
+        background: #829bed;
+        border-radius: 0 10px 10px 0;
+        font-size: 12px;
+        color: #fff;
+      }
+
+      img {
+        width: 84px;
+        height: 78px;
+      }
+
+      p {
+        font-size: 12px;
+      }
     }
-    }
-    .button{
-      display:flex;
+
+    .button {
+      display: flex;
       align-items: center;
       justify-content: center;
-    }
-    }
-    .el-carousel{
-      min-height: 384px;
-    }
-    .el-carousel__container{
-     min-height: 370px;
     }
   }
+}
 
 </style>
