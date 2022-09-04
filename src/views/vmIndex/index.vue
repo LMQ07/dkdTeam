@@ -39,12 +39,12 @@
     <addNew :dialog-visible="isShowNewAdd" />
     <change :dialog-visible="changeShow" :row-detail="changeRow" />
     <showStragory :dialog-visible="showAction" :current-stragory="currentStragory" />
-    <goodsRoad :goods-road-list="goodsRoadList" :dialog-visible.sync="showRoad" />
+    <goodsRoad :road-number="roadNumber" :goods-road-list="goodsRoadList" :dialog-visible.sync="showRoad" />
   </div>
 </template>
 
 <script>
-import { getVmIndexMsg, submitPolicy, getStragory, getGoodsRoad } from '@/api/vm'
+import { getVmIndexMsg, submitPolicy, getStragory, getGoodsRoad, getRoadNumber } from '@/api/vm'
 import setAllCheck from './components/setAllCheck.vue'
 import addNew from './components/addNew.vue'
 import change from './components/change.vue'
@@ -86,7 +86,8 @@ export default {
       showAction: false,
       showRoad: false,
       currentStragory: {},
-      goodsRoadList: []
+      goodsRoadList: [],
+      roadNumber: {}
     }
   },
   computed: {
@@ -121,7 +122,7 @@ export default {
         3: '撤机'
       }
       // 处理好数据
-      data.currentPageRecords.forEach(element => {
+      data.currentPageRecords.forEach((element) => {
         element.node.addr = element.node.addr.split('-')[3]
         element.vmStatus = statusObj[element.vmStatus]
       })
@@ -218,8 +219,15 @@ export default {
     },
     async showGoodsRoad({ row }) {
       this.showRoad = true
+      this.getRoadNumber(row)
       const res = await getGoodsRoad(row.innerCode)
       this.goodsRoadList = res.data
+    },
+    async getRoadNumber(row) {
+      console.log(row)
+      const res = await getRoadNumber(row.type && row.type.typeId)
+      this.roadNumber = res.data
+      console.log(res)
     }
   }
 }

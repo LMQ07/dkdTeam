@@ -17,17 +17,24 @@ import '@/permission' // permission control
 import * as directives from '@/directives'
 // 注册自定义指令
 // 遍历所有的导出的指令对象 完成自定义全局注册
-console.log(directives);
+console.log(directives)
 Object.keys(directives).forEach(key => {
   // 注册自定义指令
   Vue.directive(key, directives[key])
 })
 import component from './components'
+
+import * as filters from '@/filters' // 引入工具类
+// 注册全局的过滤器
+Object.keys(filters).forEach(key => {
+  // 注册过滤器
+  Vue.filter(key, filters[key])
+})
 Vue.use(component)
 
-import * as filters from '@/filters'
-Object.keys(filters).forEach(ele => {
-  Vue.filter(ele, filters[ele])
+import * as filter from '@/filters'
+Object.keys(filter).forEach(ele => {
+  Vue.filter(ele, filter[ele])
 })
 /**
  * If you don't want to use mock-server

@@ -8,9 +8,9 @@
     <div class="container">
       <div class="channel-list">
         <el-row>
-          <el-col :span="3" class="right">货道行数：</el-col>
-          <el-col :span="4" class="right">货道列数：</el-col>
-          <el-col :span="12" class="middle">货道容量（个）：</el-col>
+          <el-col :span="3" class="right">货道行数：{{ roadNumber.vmCol }}</el-col>
+          <el-col :span="4" class="right">货道列数：{{ roadNumber.vmRow }}</el-col>
+          <el-col :span="12" class="middle">货道容量（个）：{{ roadNumber.channelMaxCapacity }}</el-col>
           <el-col :span="5" class="left">
             <el-button type="primary" size="medium">智能排货</el-button>
           </el-col>
@@ -39,8 +39,8 @@
                     <el-button type="text">
                       添加
                     </el-button>
-                    <el-button type="text" style="color: red">
-                      修改
+                    <el-button type="text" style="color: red" @click="delBtn(index)">
+                      删除
                     </el-button>
                   </div>
                 </el-col>
@@ -63,7 +63,12 @@ export default {
       default: false
     },
     goodsRoadList: {
-      type: Array
+      type: Array,
+      default: () => []
+    },
+    roadNumber: {
+      type: Object,
+      default: () => ({})
     }
   },
   computed: {

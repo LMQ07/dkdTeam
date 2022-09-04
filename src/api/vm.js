@@ -126,3 +126,10 @@ export function getGoodsRoad(id) {
     method: 'GET'
   })
 }
+// 获取货道头部数据
+export function getRoadNumber(id) {
+  return request({
+    url: `vm-service/vmType/${id}`,
+    method: 'GET'
+  })
+}
