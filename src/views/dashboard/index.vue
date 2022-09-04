@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container321">
+  <div class="dashboard-container">
     <div class="dashboard-text">
       <el-row>
         <el-col :span="18">
@@ -668,7 +668,7 @@ export default {
       justify-content: space-between;
     }
 
-    .week-month-year  {
+    .week-month-year {
       display: flex;
       justify-content: center;
       align-items: center;
