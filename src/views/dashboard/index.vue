@@ -121,7 +121,14 @@
                 class="body-row"
               >
                 <el-col :span="5">
-                  <div class="top">{{ index + 1 }}</div>
+                  <div class="top" v-if="index == 0">{{ index + 1 }}</div>
+                  <div class="two1" v-else-if="index == 1">{{ index + 1 }}</div>
+                  <div class="three" v-else-if="index == 2">
+                    {{ index + 1 }}
+                  </div>
+                  <div class="other" v-else>
+                    {{ index + 1 }}
+                  </div>
                 </el-col>
                 <el-col :span="13">
                   <div class="sku-name">
@@ -740,7 +747,10 @@ export default {
       .body-row {
         margin-bottom: 30px;
       }
-      .top {
+      .top,
+      .two1,
+      .three,
+      .other {
         // display: inline-block;
         margin-left: 10px;
         text-align: center;
@@ -749,6 +759,18 @@ export default {
         width: 21px;
         height: 20px;
         background: url("~@/assets/images/one.png") no-repeat;
+      }
+      .two1 {
+        background: url("~@/assets/images/two.png") no-repeat;
+      }
+      .three {
+        background: url("~@/assets/images/three.png") no-repeat;
+      }
+      .other {
+        margin-left: 11px;
+        color: #e9b499;
+        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAUCAYAAACEYr13AAAAo0lEQVQ4T2P8/f7FfwYKAOOoAQyjYcAwGgYMgz8MGBl+gHP6fwYOXDkeX1Le8JeRsRikkeX//97/DAwB2AzBZsBVBkbGAlYB8T3IGn5/eOnC8P//BAYGBm1kcSQD/r9nYmKuZ+ITnc7IyPgHm23///9n+f3hZRYjA2MDA8N/QZAaxj/vXzxiYGTc8u3b3zo+Kak3xJRu/z89E/n7j7np////VgAGUHY6vIpVhgAAAABJRU5ErkJggg==)
+          no-repeat;
       }
       .sku-name {
         height: 20px;
