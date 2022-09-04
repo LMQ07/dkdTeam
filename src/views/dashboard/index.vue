@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-container">
+  <div class="dashboard-container321">
     <div class="dashboard-text">
       <el-row>
         <el-col :span="18">
@@ -121,12 +121,12 @@
                 class="body-row"
               >
                 <el-col :span="5">
-                  <div class="top" v-if="index == 0">{{ index + 1 }}</div>
-                  <div class="two1" v-else-if="index == 1">{{ index + 1 }}</div>
-                  <div class="three" v-else-if="index == 2">
+                  <div v-if="index == 0" class="top">{{ index + 1 }}</div>
+                  <div v-else-if="index == 1" class="two1">{{ index + 1 }}</div>
+                  <div v-else-if="index == 2" class="three">
                     {{ index + 1 }}
                   </div>
-                  <div class="other" v-else>
+                  <div v-else class="other">
                     {{ index + 1 }}
                   </div>
                 </el-col>
