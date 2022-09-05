@@ -39,7 +39,7 @@
     <addNew :dialog-visible="isShowNewAdd" />
     <change :dialog-visible="changeShow" :row-detail="changeRow" />
     <showStragory :dialog-visible="showAction" :current-stragory="currentStragory" />
-    <goodsRoad :business-id="businessId" :road-number="roadNumber" :goods-road-list="goodsRoadList" :dialog-visible.sync="showRoad" />
+    <goodsRoad ref="goodsRoad" :business-id="businessId" :road-number="roadNumber" :goods-road-list="goodsRoadList" :dialog-visible.sync="showRoad" />
   </div>
 </template>
 
@@ -221,8 +221,9 @@ export default {
     async showGoodsRoad({ row }) {
       this.showRoad = true
       this.getRoadNumber(row)
-      const res = await getGoodsRoad(row.innerCode)
-      this.goodsRoadList = res.data
+      this.$refs.goodsRoad.getGoodsRoad(row.innerCode)
+      // const res = await getGoodsRoad(row.innerCode)
+      // this.goodsRoadList = res.data
     },
     async getRoadNumber(row) {
       console.log(row)

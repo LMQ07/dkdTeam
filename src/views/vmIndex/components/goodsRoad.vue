@@ -19,28 +19,28 @@
         </div>
 
         <div class="img-container">
-          <el-carousel trigger="click" :autoplay="false">
+          <el-carousel height="384px" trigger="click" :autoplay="false" class="carousel">
             <el-carousel-item v-for="(item, index) in resultList" :key="index">
               <el-scrollbar
                 :noresize="true"
                 style="height: 100%;"
               >
                 <div type="flex">
-                  <el-col v-for="item1 in item" :key="item1.id" :span="4" class="item">
+                  <el-col v-for="(subItem, subIndex) in item" :key="subIndex" :span="4" class="item">
                     <div class="img">
-                      <el-image :src="item1&& item1.sku && item1.sku.skuImage" alt="">
+                      <el-image :src="subItem.skuImage" alt="">
                         <div slot="error" class="image-slot">
                           <i class="el-icon-picture-outline" />
                         </div>
                       </el-image>
-                      <p> {{ item1.sku && item1.sku.brandName }} </p>
-                      <p class="channelCode">{{ item1.channelCode }}</p>
+                      <p> {{ subItem.brandName || '暂无商品' }} </p>
+                      <p class="channelCode">{{ subItem.channelCode }}</p>
                     </div>
                     <div class="button">
-                      <el-button type="text">
+                      <el-button type="text" @click="handleShowSelectedGoods(index, subIndex)">
                         添加
                       </el-button>
-                      <el-button type="text" style="color: red" @click="delBtn(index)">
+                      <el-button :disabled="subItem.skuId === '0'" type="text" style="color: red" class="disabled" @click="delBtn(index, subIndex)">
                         删除
                       </el-button>
                     </div>
@@ -51,28 +51,31 @@
           </el-carousel>
         </div>
         <div class="btn">
-          <el-button class="newBuild">确认</el-button>
+          <el-button class="newBuild" @click="allSubmit">确认</el-button>
         </div>
       </div>
     </el-dialog>
     <IntelligentRoadVue :intelligent-road-list="IntelligentRoadList" :visible.sync="showRoad" @getSuggestRoad="getSuggestRoad" />
+    <SelectGoods :show-select-goods.sync="showSelectGoods" @confirm="confirmGoods" />
   </div>
 </template>
 
 <script>
 import IntelligentRoadVue from './IntelligentRoad.vue'
-import { getIntelligentRoad } from '@/api/vm'
+import { getGoodsRoad, getIntelligentRoad, submitRoad } from '@/api/vm'
+import SelectGoods from '@/views/vmIndex/components/SelectGoods'
 export default {
-  components: { IntelligentRoadVue },
+  name: 'GoodsRoad',
+  components: { SelectGoods, IntelligentRoadVue },
   props: {
     dialogVisible: {
       type: Boolean,
       default: false
     },
-    goodsRoadList: {
-      type: Array,
-      default: () => []
-    },
+    // goodsRoadList: {
+    //   type: Array,
+    //   default: () => []
+    // },
     roadNumber: {
       type: Object,
       default: () => ({})
@@ -85,36 +88,100 @@ export default {
   data() {
     return {
       showRoad: false,
-      IntelligentRoadList: []
-    }
-  },
-  computed: {
-    resultList() {
-      const arr = [[], []]
-      this.goodsRoadList.forEach(item => {
-        const currentCode = +item.channelCode.split('-')[1]
-        if (currentCode >= 6) {
-          arr[1].push(item)
-        } else {
-          arr[0].push(item)
-        }
-      })
-      return arr
+      IntelligentRoadList: [],
+      resultList: [],
+      goodsRoadList: [],
+      showSelectGoods: false,
+      selectedAddRoad: [0, 0],
+      innerCode: ''
     }
   },
   methods: {
+    calcResultList() {
+      const arr = [[], []]
+      this.goodsRoadList.forEach(item => {
+        const currentCode = +item.channelCode.split('-')[1]
+        const currentObj = {
+          skuId: item.skuId,
+          channelCode: item.channelCode,
+          brandName: item.sku && item.sku.brandName,
+          skuImage: item.sku && item.sku.skuImage
+        }
+        if (currentCode >= 6) {
+          arr[1].push(currentObj)
+        } else {
+          arr[0].push(currentObj)
+        }
+      })
+      return arr
+    },
     handleClose() {
       this.$emit('update:dialogVisible', false)
+    },
+    async getGoodsRoad(innerCode) {
+      this.innerCode = innerCode
+      const res = await getGoodsRoad(innerCode)
+      this.goodsRoadList = res.data
+      this.resultList = this.calcResultList()
     },
     async showItelligentRoad() {
       this.showRoad = true
       const res = await getIntelligentRoad(this.businessId)
-      console.log(res.data)
       this.IntelligentRoadList = res.data
     },
     getSuggestRoad(obj) {
       // 获取到当前的智能排货的列表
-      console.log(obj)
+      // 使用推荐货道
+      this.resultList[0] = this.resultList[0].map((item, index) => {
+        if (obj[index]) {
+          return {
+            skuImage: obj[index].image,
+            skuId: obj[index].skuId,
+            brandName: obj[index].skuName,
+            channelCode: item.channelCode
+          }
+        } else {
+          return item
+        }
+      })
+    },
+    handleShowSelectedGoods(index, subIndex) {
+      this.showSelectGoods = true
+      this.selectedAddRoad = [index, subIndex]
+    },
+    delBtn(index, subIndex) {
+      console.log(index, subIndex)
+      this.$set(this.resultList[index], subIndex, {
+        skuId: '0',
+        channelCode: this.resultList[index][subIndex].channelCode,
+        brandName: '',
+        skuImage: ''
+      })
+    },
+    confirmGoods(currentGoods) {
+      this.resultList[this.selectedAddRoad[0]][this.selectedAddRoad[1]] = {
+        skuImage: currentGoods.image,
+        skuId: currentGoods.skuId,
+        brandName: currentGoods.skuName,
+        channelCode: this.resultList[this.selectedAddRoad[0]][this.selectedAddRoad[1]].channelCode
+      }
+    },
+    async allSubmit() {
+      const arr = []
+      this.resultList.forEach(item => {
+        item.forEach(subItem => {
+          arr.push({
+            skuId: subItem.skuId,
+            channelCode: subItem.channelCode
+          })
+        })
+      })
+      await submitRoad({
+        innerCode: this.innerCode,
+        channelList: arr
+      })
+      this.$message.success('操作成功')
+      this.handleClose()
     }
   }
 
@@ -127,6 +194,10 @@ export default {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
+  .carousel {
+    min-height: 384px;
+  }
 
   .channel-list {
     width: 847px;
@@ -221,5 +292,9 @@ export default {
   align-items: center;
   justify-content: center;
   margin-top: 15px;
+}
+
+.disabled {
+  color: #999;
 }
 </style>

@@ -18,11 +18,22 @@ export default {
       type: String,
       require: true,
       default: ''
+    },
+    trigger: {
+      type: String,
+      default: 'click'
     }
   },
   data() {
     return {
       value: ''
+    }
+  },
+  mounted() {
+    if (this.trigger === 'change') {
+      this.$watch('value', (val) => {
+        this.searchMsg()
+      })
     }
   },
   methods: {

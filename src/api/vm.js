@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+
 // 获取售货机
 export function getVmIndexMsg(params) {
   return request({
@@ -6,12 +7,14 @@ export function getVmIndexMsg(params) {
     params
   })
 }
+
 // 获取批量策略
 export function getPolicy() {
   return request({
     url: 'vm-service/policy'
   })
 }
+
 // 批量操作提交
 export function submitPolicy(data) {
   return request({
@@ -20,6 +23,7 @@ export function submitPolicy(data) {
     data
   })
 }
+
 // 获得售货机类型列表
 export function getVmType(params) {
   return request({
@@ -27,6 +31,7 @@ export function getVmType(params) {
     params
   })
 }
+
 // 获取点位
 export function getNodeList(params) {
   return request({
@@ -34,6 +39,7 @@ export function getNodeList(params) {
     params
   })
 }
+
 // 新增设备完成
 export function addNewEquipment(data) {
   return request({
@@ -42,6 +48,7 @@ export function addNewEquipment(data) {
     data
   })
 }
+
 // 修改点位
 export function changeNode(id, nodeId) {
   return request({
@@ -49,12 +56,14 @@ export function changeNode(id, nodeId) {
     method: 'PUT'
   })
 }
+
 // 获取当前点位是否有策略
 export function getStragory(innerCode) {
   return request({
     url: `vm-service/policy/vmPolicy/${innerCode}`
   })
 }
+
 // 取消当前的策略
 export function cancelStragory(innerCode, policyId) {
   return request({
@@ -71,6 +80,7 @@ export function getSaleMQ(params) {
     params
   })
 }
+
 // 获取一定时间的收入
 export function getSalaryMQ(params) {
   return request({
@@ -78,24 +88,28 @@ export function getSalaryMQ(params) {
     params
   })
 }
+
 // 售货机补货次数
 export function getCaptureMQ(innerCode, start, end) {
   return request({
     url: `task-service/task/supplyCount/${innerCode}/${start}/${end}`
   })
 }
+
 // 售货机维修次数
 export function getRepairNumMQ(innerCode, start, end) {
   return request({
     url: `task-service/task/repairCount/${innerCode}/${start}/${end}`
   })
 }
+
 // 售货机商品销售
 export function getGoodsNumMQ(innerCode, start, end) {
   return request({
     url: `order-service/report/skuCollect/${innerCode}/${start}/${end}`
   })
 }
+
 // 删除售货机类型
 export function delectVmType(typeId) {
   return request({
@@ -103,6 +117,7 @@ export function delectVmType(typeId) {
     method: 'DELETE'
   })
 }
+
 // 上传信息
 export function addVmType(data) {
   return request({
@@ -111,6 +126,7 @@ export function addVmType(data) {
     data
   })
 }
+
 // 删除售货机类型
 export function changeVmType(typeId, data) {
   return request({
@@ -119,6 +135,7 @@ export function changeVmType(typeId, data) {
     data
   })
 }
+
 // 获取货道数据
 export function getGoodsRoad(id) {
   return request({
@@ -126,6 +143,7 @@ export function getGoodsRoad(id) {
     method: 'GET'
   })
 }
+
 // 获取货道头部数据
 export function getRoadNumber(id) {
   return request({
@@ -133,9 +151,31 @@ export function getRoadNumber(id) {
     method: 'GET'
   })
 }
+
 // 获取智能排序的内容
 export function getIntelligentRoad(id) {
   return request({
     url: `vm-service/sku/businessTop10/${id}`
+  })
+}
+
+/**
+ *
+ * @param {{ pageIndex: number, pageSize: number}} params
+ * @returns {*}
+ */
+export function getGoodsList(params) {
+  return request({
+    url: 'vm-service/sku/search',
+    method: 'GET',
+    params
+  })
+}
+
+export function submitRoad(data) {
+  return request({
+    url: 'vm-service/channel/channelConfig',
+    method: 'PUT',
+    data
   })
 }
